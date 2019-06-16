@@ -4,7 +4,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Date;
-import java.math.BigDecimal
+import java.math.BigDecimal;
 
 /**
  * Date  ${date}

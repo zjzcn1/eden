@@ -14,7 +14,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>script</directory>
-			<outputDirectory>${file.separator}</outputDirectory>
+			<outputDirectory></outputDirectory>
 			<fileMode>755</fileMode>
 		</fileSet>
 	</fileSets>

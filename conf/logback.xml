@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="true" scan="true">
+    <property name="log.name" value="eden"/>
     <property name="log.filePath" value="logs"/>
     <property name="log_level" value="debug"/>
     <property name="log.maxHistory" value="7"/>
@@ -14,10 +15,10 @@
     <!-- DEBUG -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件路径 -->
-        <file>${log.filePath}/mqtt-server.log</file>
+        <file>${log.filePath}/${log.name}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 文件名称 -->
-            <fileNamePattern>${log.filePath}/mqtt-server.%d{yyyy-MM-dd}.log.gz
+            <fileNamePattern>${log.filePath}/${log.name}.%d{yyyy-MM-dd}.log.gz
             </fileNamePattern>
             <!-- 文件最大保存历史数量 -->
             <MaxHistory>${log.maxHistory}</MaxHistory>

@@ -1,4 +1,4 @@
-package com.github.springboot.demo.config;
+package ${packageName}.config;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;

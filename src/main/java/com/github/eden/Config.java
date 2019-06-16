@@ -6,6 +6,7 @@ public class Config implements Serializable {
 
     private String projectName;
     private String packageName;
+    private String dbDriverClass;
     private String dbUrl;
     private String dbUsername;
     private String dbPassword;
@@ -24,6 +25,14 @@ public class Config implements Serializable {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getDbDriverClass() {
+        return dbDriverClass;
+    }
+
+    public void setDbDriverClass(String dbDriverClass) {
+        this.dbDriverClass = dbDriverClass;
     }
 
     public String getDbUrl() {
@@ -49,4 +58,5 @@ public class Config implements Serializable {
     public void setDbPassword(String dbPassword) {
         this.dbPassword = dbPassword;
     }
+
 }

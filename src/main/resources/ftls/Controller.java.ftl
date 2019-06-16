@@ -34,7 +34,7 @@ public class ${className}Controller {
     @RequestMapping(path = "update${className}", method = RequestMethod.PUT)
     @ResponseBody
     public Result<Void> update${className}(@RequestBody ${className} ${objectName}) {
-        ${objectName}Service.update${className}r(${objectName});
+        ${objectName}Service.update${className}(${objectName});
         return Result.ok();
     }
 

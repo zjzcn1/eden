@@ -1,94 +1,91 @@
 package com.github.eden;
 
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DbConnection {
 
-    public DbConnection(String dbUrl, String dbUsername, String dbPassword) {
+    private Connection connection;
 
+    public DbConnection(Config config) {
+        try {
+            Class.forName(config.getDbDriverClass());
+            connection = DriverManager.getConnection(config.getDbUrl(), config.getDbUsername(), config.getDbPassword());
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<String> getTables() {
         List<String> tables = new ArrayList<>();
-        tables.add("user");
-        tables.add("role");
-        tables.add("user_role");
+        try {
+            Statement statement = connection.createStatement();
+            String sql = "show tables";
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                System.out.println(resultSet.getString(1));
+                tables.add(resultSet.getString(1));
+            }
+            statement.close();
+            resultSet.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return tables;
     }
 
     public List<TableColumn> getColumns(String tableName) {
         List<TableColumn> columns = new ArrayList<>();
-        columns.add(new TableColumn("id", "Long", true));
-        columns.add(new TableColumn("name", "String", true));
+        try {
+            String sql = "show full fields from " + tableName;
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String name = resultSet.getString("FIELD");
+                String type = resultSet.getString("TYPE");
+                if (type.indexOf("(") > 0) {
+                    type = type.substring(0, type.indexOf("("));
+                }
+                type = parseTypeFormSqlType(type);
+                boolean isKey = false;
+                if ("PRI".equalsIgnoreCase(resultSet.getString("KEY"))) {
+                    isKey = true;
+                }
+                columns.add(new TableColumn(name, type, isKey));
+            }
+            statement.close();
+            resultSet.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return columns;
     }
 
-    private String parseTypeFormSqlType(int sqlType) {
-        StringBuilder sb = new StringBuilder();
-        switch (sqlType) {
-            case Types.BIT:
-            case Types.BOOLEAN:
-                sb.append("Boolean");
-                break;
-            case Types.TINYINT:
-                sb.append("Byte");
-                break;
-            case Types.SMALLINT:
-                sb.append("Short");
-                break;
-            case Types.INTEGER:
-                sb.append("Integer");
-                break;
-            case Types.BIGINT:
-                sb.append("Long");
-                break;
-            case Types.REAL:
-                sb.append("Float");
-                break;
-            case Types.FLOAT:
-            case Types.DOUBLE:
-                sb.append("Double");
-                break;
-            case Types.DECIMAL:
-            case Types.NUMERIC:
-                sb.append("BigDecimal");
-                break;
-            case Types.VARCHAR:
-            case Types.CHAR:
-            case Types.NCHAR:
-            case Types.NVARCHAR:
-            case Types.LONGVARCHAR:
-            case Types.LONGNVARCHAR:
-                sb.append("String");
-                break;
-            case Types.DATE:
-                sb.append("Date");
-                break;
-            case Types.TIME:
-                sb.append("Time");
-                break;
-            case Types.TIMESTAMP:
-                sb.append("Timestamp");
-                break;
-            case Types.NCLOB:
-            case Types.CLOB:
-            case Types.BLOB:
-            case Types.BINARY:
-            case Types.VARBINARY:
-            case Types.LONGVARBINARY:
-                sb.append("byte[]");
-                break;
-            case Types.NULL:
-            case Types.OTHER:
-            case Types.JAVA_OBJECT:
-                sb.append("Object");
-                break;
-            default:
-                sb.append("Object");
-
+    private String parseTypeFormSqlType(String type) {
+        type = type.toUpperCase();
+        if (type.contains("CHAR")) {
+            return "String";
+        } else if (type.contains("BIGINT")) {
+            return "Long";
+        } else if (type.contains("INT")) {
+            return "Integer";
+        } else if (type.contains("DATE")) {
+            return "Date";
+        } else if (type.contains("TEXT")) {
+            return "String";
+        } else if (type.contains("TIMESTAMP")) {
+            return "Date";
+        } else if (type.contains("BIT")) {
+            return "Boolean";
+        } else if (type.contains("DECIMAL")) {
+            return "BigDecimal";
+        } else if (type.contains("BLOB")) {
+            return "byte[]";
+        } else if (type.contains("DOUBLE")) {
+            return "Double";
+        } else {
+            return "Object";
         }
-        return sb.toString();
     }
 }

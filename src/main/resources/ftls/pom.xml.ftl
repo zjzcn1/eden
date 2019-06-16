@@ -9,13 +9,9 @@
         <version>2.1.5.RELEASE</version>
     </parent>
 
-    <groupId>com.github.springboot</groupId>
-    <artifactId>springboot-demo</artifactId>
+    <groupId>${packageName}</groupId>
+    <artifactId>${projectName}</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-
-    <properties>
-        <logback.version>1.2.3</logback.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -83,7 +79,7 @@
                 <version>2.5.4</version>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>${project.name}</finalName>
+                    <finalName>${r"${"}project.name${r"}"}</finalName>
                     <descriptors>
                         <descriptor>assembly.xml</descriptor>
                     </descriptors>

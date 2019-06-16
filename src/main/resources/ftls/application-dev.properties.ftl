@@ -1,5 +1,5 @@
-spring.application.name=springboot-demo
-application.main=com.github.springboot.demo.Application
+spring.application.name=${projectName}
+application.main=${applicationMain}
 #服务器端口
 server.port=8081
 server.session-timeout=60
@@ -11,10 +11,10 @@ logging.level.root=DEBUG
 spring.http.multipart.maxFileSize=1000Mb
 spring.http.multipart.maxRequestSize=10000Mb
 
-spring.datasource.url=jdbc:mysql://localhost:3306/my_db?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&useSSL=false
-spring.datasource.username=root
-spring.datasource.password=njutzjz126
-spring.datasource.driverClassName=com.mysql.jdbc.Driver
+spring.datasource.driverClassName=${dbDriverClass}
+spring.datasource.url=${dbUrl}
+spring.datasource.username=${dbUsername}
+spring.datasource.password=${dbPassword}
 
 spring.datasource.type=com.zaxxer.hikari.HikariDataSource
 spring.datasource.min-idle=5

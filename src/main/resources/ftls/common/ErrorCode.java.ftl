@@ -1,4 +1,4 @@
-package com.github.springboot.demo.common;
+package ${packageName}.common;
 
 public enum ErrorCode {
 

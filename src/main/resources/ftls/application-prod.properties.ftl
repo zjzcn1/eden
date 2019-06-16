@@ -5,7 +5,7 @@ server.port=8081
 server.session-timeout=60
 server.tomcat.max-threads=800
 server.tomcat.connector.max-http-header-size=102400000
-logging.level.root=DEBUG
+logging.level.root=INFO
 
 #上传文件最大容量
 spring.http.multipart.maxFileSize=1000Mb

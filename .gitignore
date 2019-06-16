@@ -9,7 +9,7 @@
 /nb*
 /release.properties
 /target
-/.DS_Store
+.DS_Store
 
 # These are needed if running in IDE without properties set
 /ibderby

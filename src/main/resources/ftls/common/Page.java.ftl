@@ -1,7 +1,6 @@
 package ${packageName}.common;
 
 import lombok.Data;
-
 import java.util.List;
 
 @Data
@@ -12,18 +11,18 @@ public class Page<T> {
     private long total;
     private List<T> list;
 
-        private Page(int current, int size, long total, List<T> list) {
-            this.current = current;
-            this.size = size;
-            this.total = total;
-            this.list = list;
-            }
+    private Page(int current, int size, long total, List<T> list) {
+        this.current = current;
+        this.size = size;
+        this.total = total;
+        this.list = list;
+    }
 
-        public static <T> Page<T> of(Pageable pageable, long total, List<T> list) {
-            return new Page<>(pageable.getCurrent(), pageable.getSize(), total, list);
-        }
+    public static <T> Page<T> of(Pageable pageable, long total, List<T> list) {
+        return new Page<>(pageable.getCurrent(), pageable.getSize(), total, list);
+    }
 
-        public static <T> Page<T> of(int current, int size, long total, List<T> list) {
-             return new Page<>(current, size, total, list);
-        }
+    public static <T> Page<T> of(int current, int size, long total, List<T> list) {
+        return new Page<>(current, size, total, list);
+    }
 }

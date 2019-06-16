@@ -18,11 +18,6 @@
             <outputDirectory>./</outputDirectory>
             <fileMode>755</fileMode>
         </fileSet>
-        <fileSet>
-            <directory>webui/dist</directory>
-            <outputDirectory>webapp/</outputDirectory>
-            <fileMode>755</fileMode>
-        </fileSet>
     </fileSets>
 
     <dependencySets>

@@ -1,4 +1,4 @@
-package com.github.springboot.demo.config;
+package ${packageName}.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

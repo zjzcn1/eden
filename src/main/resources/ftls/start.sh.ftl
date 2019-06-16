@@ -1,5 +1,5 @@
 #!/bin/sh
-MAIN_CLASS="com.github.springboot.demo.Application"
+MAIN_CLASS="${applicationMain}"
 
 CURRENT_DIR=`dirname "$0"`
 PROJECT_DIR=`cd $CURRENT_DIR && pwd`

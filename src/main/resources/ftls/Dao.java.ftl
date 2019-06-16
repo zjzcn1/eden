@@ -2,7 +2,7 @@ package ${packageName}.dao;
 
 import ${packageName}.common.Page;
 import ${packageName}.common.Pageable;
-import c${packageName}.entity.${className};
+import ${packageName}.entity.${className};
 import org.apache.ibatis.annotations.Mapper;
 
 /**
