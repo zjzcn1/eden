@@ -1,26 +1,23 @@
-package ${servicePackageName};
+package ${packageName}.service;
 
-import ${entityPackageName}.${className};
 
-import java.util.List;
+import ${packageName}.common.Page;
+import ${packageName}.common.Pageable;
+import ${packageName}.entity.${className};
 
 /**
  * Date  ${date}
  */
 public interface ${className}Service {
 
-    public ${className} get(String id);
+    public ${className} get${className}(Long id);
 
-    public List<${className}> findList(${className} ${objectName});
+    public Page<${className}> findByPageable(Pageable pageable);
 
-    public List<${className}> findAllList();
+    public Long insert${className}(${className} ${objectName});
 
-    public int insert(${className} ${objectName});
+    public int update${className}(${className} ${objectName});
 
-    public int insertBatch(List<${className}> ${objectName}s);
-
-    public int update(${className} ${objectName});
-
-    public int delete(${className} ${objectName});
+    public int delete${className}(Long id);
 
 }

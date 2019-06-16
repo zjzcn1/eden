@@ -1,17 +1,18 @@
-package ${entityPackageName};
+package ${packageName}.entity;
 
+import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.util.Date;
+import java.math.BigDecimal
 
 /**
  * Date  ${date}
  */
+@Data
 public class ${className} implements Serializable {
-    private static final long serialVersionUID = 1L;
+private static final long serialVersionUID = 1L;
 
-    ${entityProperties}
+${entityProperties}
 
 }

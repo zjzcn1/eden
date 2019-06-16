@@ -1,71 +1,48 @@
-package ${controllerPackageName};
+package ${packageName}.controller;
 
-import ${entityPackageName}.${className};
-import ${servicePackageName}.${className}Service;
+import ${packageName}.common.Page;
+import ${packageName}.common.Pageable;
+import ${packageName}.common.Result;
+import ${packageName}.entity.${className};
+import ${packageName}.service.${className}Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Date  ${date}
  */
 @RestController
-@RequestMapping(value = "/${tableName}")
 public class ${className}Controller {
+
     @Autowired
     private ${className}Service ${objectName}Service;
 
-    @RequestMapping(value = {"/list", ""}, method = RequestMethod.GET)
-    public Object list() {
-        List<${className}> ${objectName}s = ${objectName}Service.findAllList();
-        return ${objectName}s;
+    @RequestMapping(path = "list${className}", method = RequestMethod.POST)
+    @ResponseBody
+    public Result<Page<${className}>> list${className}(@RequestBody Pageable pageable) {
+        Page<${className}> page =${objectName}Service.findByPageable(pageable);
+        return Result.ok(page);
     }
 
-    @RequestMapping(value = {"/get"}, method = RequestMethod.GET)
-    public Object get(@RequestParam String id) {
-        ${className} ${objectName} = ${objectName}Service.get(id);
-        return ${objectName};
+    @RequestMapping(path = "add${className}", method = RequestMethod.POST)
+    @ResponseBody
+    public Result<${className}> add${className}(@RequestBody ${className} ${objectName}) {
+        ${objectName}Service.insert${className}(${objectName});
+        return Result.ok();
     }
 
-    @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public String insert(@RequestBody ${className} ${objectName}) {
-        if (${objectName}Service.insert(${objectName}) > 0) {
-            return "success";
-        } else {
-            return "failed";
-        }
+    @RequestMapping(path = "update${className}", method = RequestMethod.PUT)
+    @ResponseBody
+    public Result<Void> update${className}(@RequestBody ${className} ${objectName}) {
+        ${objectName}Service.update${className}r(${objectName});
+        return Result.ok();
     }
 
-    @RequestMapping(value = "/insertBatch", method = RequestMethod.POST)
-    public String insertBatch(@RequestBody List<${className}> ${objectName}s) {
-        if (${objectName}Service.insertBatch(${objectName}s) > 0) {
-            return "success";
-        } else {
-            return "failed";
-        }
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@RequestBody ${className} ${objectName}) {
-        if (${objectName}Service.update(${objectName}) > 0) {
-            return "success";
-        } else {
-            return "failed";
-        }
-    }
-
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public String delete(@RequestBody ${className} ${objectName}) {
-        if (${objectName}Service.delete(${objectName}) > 0) {
-            return "success";
-        } else {
-            return "failed";
-        }
+    @RequestMapping(path = "delete${className}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public Result<Void> delete${className}(Long id) {
+        ${objectName}Service.delete${className}(id);
+        return Result.ok();
     }
 
 }

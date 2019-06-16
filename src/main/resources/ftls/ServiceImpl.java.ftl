@@ -1,48 +1,47 @@
-package ${serviceImplPackageName};
+package ${packageName}.service.impl;
 
-import ${daoPackageName}.${className}Dao;
-import ${entityPackageName}.${className};
-import ${servicePackageName}.${className}Service;
+import ${packageName}.common.Page;
+import ${packageName}.common.Pageable;
+import ${packageName}.entity.${className};
+import ${packageName}.service.${className}Service;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
- * Date  ${date}
+ * Date  2019-06-15
  */
+@Slf4j
 @Service
-public class ${className}ServiceImpl {
+public class ${className}ServiceImpl implements ${className}Service {
     @Autowired
-    private ${className}Dao ${objectName}Dao;
+    private ${packageName}.dao.${className}Dao ${objectName}Dao;
 
     @Override
-    public ${className} get(Long id){
-        return ${objectName}Dao.get(id);
+    public ${className} get${className}(Long id) {
+        return ${objectName}Dao.getById(id);
     }
+
     @Override
-    public List<${className}> findList(${className} ${objectName}) {
-        return ${objectName}Dao.findList(${objectName});
+    public Page<${className}> findByPageable(Pageable pageable) {
+        return ${objectName}Dao.findByPageable(pageable);
     }
+
     @Override
-    public List<${className}> findAllList() {
-        return ${objectName}Dao.findAllList();
-    }
-    @Override
-    public int insert(${className} ${objectName}) {
+    public Long insert${className}(${className} ${objectName}) {
+        log.info("Insert ${objectName}={}", ${objectName});
         return ${objectName}Dao.insert(${objectName});
     }
+
     @Override
-    public int insertBatch(List<${className}> ${objectName}s){
-        return ${objectName}Dao.insertBatch(${objectName}s);
-    }
-    @Override
-    public int update(${className} ${objectName}) {
+    public int update${className}(${className} ${objectName}) {
+        log.info("Update ${objectName}={}", ${objectName});
         return ${objectName}Dao.update(${objectName});
     }
-    @Override
-    public int delete(${className} ${objectName}) {
-        return ${objectName}Dao.delete(${objectName});
-    }
 
+    @Override
+    public int delete${className}(Long id) {
+        log.info("Delete ${objectName}, id={}", id);
+        return ${objectName}Dao.delete(id);
+    }
 }
