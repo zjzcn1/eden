@@ -10,6 +10,8 @@
 /release.properties
 /target
 .DS_Store
+*.log
+*.log.*-*-*
 
 # These are needed if running in IDE without properties set
 /ibderby
