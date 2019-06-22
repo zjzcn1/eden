@@ -87,7 +87,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                     <descriptors>
-                        <descriptor>${project.basedir}/dist.xml</descriptor>
+                        <descriptor>${project.basedir}/assembly.xml</descriptor>
                     </descriptors>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
