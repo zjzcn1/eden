@@ -15,13 +15,12 @@ public class Result<T> {
         this.data = data;
     }
 
-
-    public static <T> Result<T> ok(T data) {
-        return new Result<>(ErrorCode.OK.code(), ErrorCode.OK.msg(), data);
+   public static <T> Result<T> success(T data) {
+        return new Result<>(ErrorCode.Success.code(), ErrorCode.Success.msg(), data);
     }
 
-    public static <T> Result<T> ok() {
-        return new Result<>(ErrorCode.OK.code(), ErrorCode.OK.msg(), null);
+    public static <T> Result<T> success() {
+        return new Result<>(ErrorCode.Success.code(), ErrorCode.Success.msg(), null);
     }
 
     public static <T> Result<T> error(int code, String msg) {

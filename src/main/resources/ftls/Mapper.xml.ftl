@@ -7,9 +7,9 @@
     </sql>
 
     <select id="getById" resultType="${packageName}.entity.${className}">
-        SELECT
+        select
         <include refid="Base_Column_List" />
-        FROM ${tableName}
+        from ${tableName}
         <where>
             ${tableName}.${primaryKey} = ${primaryKeyValue}
         </where>
@@ -24,23 +24,24 @@
     </select>
 
     <insert id="insert" parameterType="${packageName}.entity.${className}" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO ${tableName}(
+        insert into ${tableName}(
             ${tableColumnNames}
         )
-        VALUES (
+        values (
             ${tableColumnValues}
         )
     </insert>
 
     <update id="update" parameterType="${packageName}.entity.${className}">
-        UPDATE ${tableName} SET
+        update ${tableName} set
         ${updateProperties}
         WHERE ${primaryKey} = ${primaryKeyValue}
     </update>
 
     <update id="delete">
-        DELETE FROM ${tableName}
-        WHERE ${primaryKey} = ${primaryKeyValue}
+        update ${tableName}
+        set deleted = 1
+        where ${primaryKey} = ${primaryKeyValue}
     </update>
 
 </mapper>

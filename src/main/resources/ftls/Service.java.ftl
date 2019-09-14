@@ -10,14 +10,14 @@ import ${packageName}.entity.${className};
  */
 public interface ${className}Service {
 
-    public ${className} get${className}(Long id);
+    ${className} get${className}(Long id);
 
-    public Page<${className}> findByPageable(Pageable pageable);
+    Page<${className}> findByPageable(Pageable pageable);
 
-    public Long insert${className}(${className} ${objectName});
+    Long insert${className}(${className} ${objectName});
 
-    public int update${className}(${className} ${objectName});
+    int update${className}(${className} ${objectName});
 
-    public int delete${className}(Long id);
+    int delete${className}(Long id);
 
 }

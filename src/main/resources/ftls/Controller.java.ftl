@@ -21,28 +21,28 @@ public class ${className}Controller {
     @ResponseBody
     public Result<Page<${className}>> list${className}(@RequestBody Pageable pageable) {
         Page<${className}> page =${objectName}Service.findByPageable(pageable);
-        return Result.ok(page);
+        return Result.success(page);
     }
 
     @RequestMapping(path = "add${className}", method = RequestMethod.POST)
     @ResponseBody
     public Result<${className}> add${className}(@RequestBody ${className} ${objectName}) {
         ${objectName}Service.insert${className}(${objectName});
-        return Result.ok();
+        return Result.success();
     }
 
     @RequestMapping(path = "update${className}", method = RequestMethod.PUT)
     @ResponseBody
     public Result<Void> update${className}(@RequestBody ${className} ${objectName}) {
         ${objectName}Service.update${className}(${objectName});
-        return Result.ok();
+        return Result.success();
     }
 
     @RequestMapping(path = "delete${className}", method = RequestMethod.DELETE)
     @ResponseBody
     public Result<Void> delete${className}(Long id) {
         ${objectName}Service.delete${className}(id);
-        return Result.ok();
+        return Result.success();
     }
 
 }

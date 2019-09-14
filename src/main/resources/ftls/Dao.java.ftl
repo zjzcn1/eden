@@ -11,14 +11,14 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ${className}Dao {
 
-    public ${className} getById(Long id);
+    ${className} getById(Long id);
 
-    public Page<${className}> findByPageable(Pageable pageable);
+    Page<${className}> findByPageable(Pageable pageable);
 
-    public Long insert(${className} ${objectName});
+    Long insert(${className} ${objectName});
 
-    public int update(${className} ${objectName});
+    int update(${className} ${objectName});
 
-    public int delete(Long id);
+    int delete(Long id);
 
 }

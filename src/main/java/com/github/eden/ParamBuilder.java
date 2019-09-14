@@ -9,32 +9,37 @@ import java.util.Map;
 
 public class ParamBuilder {
 
-    public static String buildControllerFile(String packageName, String tableName) {
+    public static String buildControllerFileName(String packageName, String tableName) {
         String controllerPath = Utils.packageToPath(packageName + ".controller");
         return controllerPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + "Controller.java";
     }
 
-    public static String buildServiceFile(String packageName, String tableName) {
+    public static String buildServiceFileName(String packageName, String tableName) {
         String controllerPath = Utils.packageToPath(packageName + ".service");
         return controllerPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + "Service.java";
     }
 
-    public static String buildServiceImplFile(String packageName, String tableName) {
+    public static String buildServiceImplFileName(String packageName, String tableName) {
         String controllerPath = Utils.packageToPath(packageName + ".service.impl");
         return controllerPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + "ServiceImpl.java";
     }
 
-    public static String buildEntityFile(String packageName, String tableName) {
+    public static String buildEntityFileName(String packageName, String tableName) {
         String controllerPath = Utils.packageToPath(packageName + ".entity");
         return controllerPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + ".java";
     }
 
-    public static String buildDaoFile(String packageName, String tableName) {
+    public static String buildDaoFileName(String packageName, String tableName) {
         String controllerPath = Utils.packageToPath(packageName + ".dao");
         return controllerPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + "Dao.java";
     }
 
-    public static String buildMapperFile(String packageName, String tableName) {
+    public static String buildMapperFileName(String packageName, String tableName) {
+        String viewPath = "src/views/modules/";
+        return viewPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + ".vue";
+    }
+
+    public static String buildViewFileName(String packageName, String tableName) {
         String mapperPath = "mapper/";
         return mapperPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + "Mapper.xml";
     }

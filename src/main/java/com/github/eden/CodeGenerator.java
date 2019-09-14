@@ -1,6 +1,7 @@
 package com.github.eden;
 
 
+import cn.hutool.core.io.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,46 +29,56 @@ public class CodeGenerator {
         String resourcePath = projectPath + "/src/main/resources/";
         String packageName = config.getPackageName();
 
+        FileUtil.copy(Utils.getRootPath() + "/webui", projectPath, true);
+
         List<String> tables = connection.getTables();
         for (String table : tables) {
             List<TableColumn> columns = connection.getColumns(table);
             // Controller
             Map<String, Object> controllerParam = ParamBuilder.buildParam(packageName, table, columns);
             String controller = engine.render("Controller.java.ftl", controllerParam);
-            String controllerFile = javaPath + ParamBuilder.buildControllerFile(packageName, table);
+            String controllerFile = javaPath + ParamBuilder.buildControllerFileName(packageName, table);
             Utils.writeFile(controllerFile, controller);
             logger.info("Generate code to path: {}", controllerFile);
 
             // Service
             Map<String, Object> param = ParamBuilder.buildParam(packageName, table, columns);
             String service = engine.render("Service.java.ftl", param);
-            String serviceFile = javaPath + ParamBuilder.buildServiceFile(packageName, table);
+            String serviceFile = javaPath + ParamBuilder.buildServiceFileName(packageName, table);
             Utils.writeFile(serviceFile, service);
             logger.info("Generate code to path: {}", serviceFile);
 
             // ServiceImpl
             String serviceImpl = engine.render("ServiceImpl.java.ftl", param);
-            String serviceImplFile = javaPath + ParamBuilder.buildServiceImplFile(packageName, table);
+            String serviceImplFile = javaPath + ParamBuilder.buildServiceImplFileName(packageName, table);
             Utils.writeFile(serviceImplFile, serviceImpl);
             logger.info("Generate code to path: {}", serviceImplFile);
 
             // Dao
             String dao = engine.render("Dao.java.ftl", param);
-            String daoFile = javaPath + ParamBuilder.buildDaoFile(packageName, table);
+            String daoFile = javaPath + ParamBuilder.buildDaoFileName(packageName, table);
             Utils.writeFile(daoFile, dao);
             logger.info("Generate code to path: {}", daoFile);
 
             // Entity
             String entity = engine.render("Entity.java.ftl", param);
-            String entityFile = javaPath + ParamBuilder.buildEntityFile(packageName, table);
+            String entityFile = javaPath + ParamBuilder.buildEntityFileName(packageName, table);
             Utils.writeFile(entityFile, entity);
             logger.info("Generate code to path: {}", entityFile);
 
             // Mapper
             String mapper = engine.render("Mapper.xml.ftl", param);
-            String mapperFile = resourcePath + ParamBuilder.buildMapperFile(packageName, table);
+            String mapperFile = resourcePath + ParamBuilder.buildMapperFileName(packageName, table);
             Utils.writeFile(mapperFile, mapper);
             logger.info("Generate code to path: {}", mapperFile);
+
+            // UI
+            Map<String, Object> viewParams = new HashMap<>();
+            viewParams.put("columns", columns);
+            String view = engine.render("webui/ModuleView.vue.ftl", viewParams);
+            String viewFile = projectPath + "/webui/" + ParamBuilder.buildMapperFileName(packageName, table);
+            Utils.writeFile(viewFile, view);
+            logger.info("Generate code to path: {}", viewFile);
         }
 
         Map<String, Object> param= new HashMap<>();
@@ -171,6 +182,7 @@ public class CodeGenerator {
         String start = engine.render("start.sh.ftl", param);
         String startFile = projectPath + "/script/start.sh";
         Utils.writeFile(startFile, start);
+
         logger.info("Generate code to path: {}", startFile);
     }
 

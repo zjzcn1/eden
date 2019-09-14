@@ -1,5 +1,7 @@
 package com.github.eden;
 
+import cn.hutool.core.util.StrUtil;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,9 @@ public class DbConnection {
                 if ("PRI".equalsIgnoreCase(resultSet.getString("KEY"))) {
                     isKey = true;
                 }
-                columns.add(new TableColumn(name, type, isKey));
+                String propertyName = StrUtil.toCamelCase(name);
+                String comment = resultSet.getString("COMMENT");
+                columns.add(new TableColumn(name, type, propertyName, isKey, comment));
             }
             statement.close();
             resultSet.close();

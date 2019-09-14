@@ -9,6 +9,7 @@
 /nb*
 /release.properties
 /target
+/project
 .DS_Store
 *.log
 *.log.*-*-*

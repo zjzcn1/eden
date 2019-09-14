@@ -1,5 +1,8 @@
 package com.github.eden;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
@@ -44,19 +47,23 @@ public class Utils {
         }
     }
 
-    public static <T> Class<T> forClass(String className) {
-        try {
-            return (Class<T>) Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+    public static void setLogbackFile(String logbackFile) {
+        File file = new File(logbackFile);
+        if (!file.exists()) {
+            System.err.println("Not find logback.xml, file: " + file);
+            System.exit(-1);
+            return;
         }
-    }
-
-    public static <T> T newObject(Class<T> clazz) {
+        LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(ctx);
+        ctx.reset();
         try {
-            return clazz.newInstance();
-        } catch (IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException(e);
+            configurator.doConfigure(file);
+            log.info("Loaded logback.xml success, file: {}.", file);
+        } catch (JoranException e) {
+            e.printStackTrace(System.err);
+            System.exit(-1);
         }
     }
 
