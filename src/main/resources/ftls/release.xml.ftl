@@ -13,7 +13,7 @@
 			<outputDirectory>config</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>script</directory>
+			<directory>bin</directory>
 			<outputDirectory></outputDirectory>
 			<fileMode>755</fileMode>
 		</fileSet>

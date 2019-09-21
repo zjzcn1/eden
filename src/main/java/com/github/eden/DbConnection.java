@@ -1,11 +1,15 @@
 package com.github.eden;
 
 import cn.hutool.core.util.StrUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 public class DbConnection {
 
     private Connection connection;
@@ -26,7 +30,6 @@ public class DbConnection {
             String sql = "show tables";
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                System.out.println(resultSet.getString(1));
                 tables.add(resultSet.getString(1));
             }
             statement.close();
@@ -35,6 +38,41 @@ public class DbConnection {
             throw new RuntimeException(e);
         }
         return tables;
+    }
+
+    /**
+     * 获得某表的建表语句
+     * @param tableName
+     * @return
+     * @throws Exception
+     */
+    public String getCommentByTableName(String tableName) {
+        String comment = null;
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SHOW CREATE TABLE " + tableName);
+            if (resultSet != null && resultSet.next()) {
+                String ddl = resultSet.getString(2);
+                comment = parseTableComment(ddl);
+            }
+            statement.close();
+            resultSet.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return comment;
+    }
+
+    public static String parseTableComment(String all) {
+        String comment = null;
+        int index = all.indexOf("COMMENT='");
+        if (index < 0) {
+            return "";
+        }
+        comment = all.substring(index + 9);
+        comment = comment.substring(0, comment.length() - 1);
+        return comment;
+
     }
 
     public List<TableColumn> getColumns(String tableName) {

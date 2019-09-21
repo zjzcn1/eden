@@ -17,28 +17,28 @@ public class ${className}Controller {
     @Autowired
     private ${className}Service ${objectName}Service;
 
-    @RequestMapping(path = "list${className}", method = RequestMethod.POST)
+    @RequestMapping(path = "${objectName}/list${className}", method = RequestMethod.POST)
     @ResponseBody
     public Result<Page<${className}>> list${className}(@RequestBody Pageable pageable) {
         Page<${className}> page =${objectName}Service.findByPageable(pageable);
         return Result.success(page);
     }
 
-    @RequestMapping(path = "add${className}", method = RequestMethod.POST)
+    @RequestMapping(path = "${objectName}/create${className}", method = RequestMethod.POST)
     @ResponseBody
     public Result<${className}> add${className}(@RequestBody ${className} ${objectName}) {
         ${objectName}Service.insert${className}(${objectName});
         return Result.success();
     }
 
-    @RequestMapping(path = "update${className}", method = RequestMethod.PUT)
+    @RequestMapping(path = "${objectName}/update${className}", method = RequestMethod.PUT)
     @ResponseBody
     public Result<Void> update${className}(@RequestBody ${className} ${objectName}) {
         ${objectName}Service.update${className}(${objectName});
         return Result.success();
     }
 
-    @RequestMapping(path = "delete${className}", method = RequestMethod.DELETE)
+    @RequestMapping(path = "${objectName}/delete${className}", method = RequestMethod.DELETE)
     @ResponseBody
     public Result<Void> delete${className}(Long id) {
         ${objectName}Service.delete${className}(id);

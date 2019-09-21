@@ -73,6 +73,16 @@ public class Utils {
 
     public static void writeFile(String fileName, String content) {
         FileUtil.writeString(content, fileName, "utf-8");
+        log.info("Generate code to path: {}", fileName);
+    }
+
+
+    public static String toClassName(String tableName) {
+        return StrUtil.upperFirst(StrUtil.toCamelCase(tableName));
+    }
+
+    public static String toObjectName(String tableName) {
+        return StrUtil.toCamelCase(tableName);
     }
 
     public static String packageToPath(String packageName) {

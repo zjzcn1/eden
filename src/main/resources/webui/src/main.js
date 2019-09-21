@@ -39,7 +39,7 @@ axios.interceptors.response.use(
     } else {
       Notification.error({
         title: '错误',
-        message: response.data.message,
+        message: response.data.msg,
       });
       return response;
     }

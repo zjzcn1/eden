@@ -3,4 +3,5 @@ dbUrl: jdbc:mysql://localhost:3306/bookcase?autoReconnect=true&useUnicode=true&c
 dbUsername: root
 dbPassword: njutzjz126
 projectName: bookcase
+systemName: 机器人后台
 packageName: com.planetengine.bookcase

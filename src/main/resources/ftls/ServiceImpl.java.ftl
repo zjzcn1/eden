@@ -4,6 +4,7 @@ import ${packageName}.common.Page;
 import ${packageName}.common.Pageable;
 import ${packageName}.entity.${className};
 import ${packageName}.service.${className}Service;
+import ${packageName}.dao.${className}Dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ${className}ServiceImpl implements ${className}Service {
     @Autowired
-    private ${packageName}.dao.${className}Dao ${objectName}Dao;
+    private ${className}Dao ${objectName}Dao;
 
     @Override
     public ${className} get${className}(Long id) {

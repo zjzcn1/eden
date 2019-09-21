@@ -22,12 +22,11 @@ package ${packageName}.common;
 
 public enum ErrorCode {
 
-    Success(0, "成功"),
-    SystemError(1, "系统错误"),
-    Unauthorized(2, "没有登录"),
-    Forbidden(3, "没有权限"),
-    InvalidArgs(4, "参数错误"),
-    UserNotFound(5, "用户不存在");
+    Success(200, "成功"),
+    Unauthorized(401, "没有登录"),
+    Forbidden(403, "没有权限"),
+    InvalidArgs(400, "业务异常"),
+    SystemError(500, "系统错误");
 
     private int code;
     private String msg;

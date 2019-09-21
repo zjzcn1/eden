@@ -62,7 +62,7 @@
 
 <script>
 
-  import Webapi from '../api/webapi'
+  import Webapi from '../webapi'
 
   export default {
     data() {
@@ -79,7 +79,7 @@
         this.$confirm('确认退出吗?', '提示', {
           type: 'warning'
         }).then(() => {
-          Webapi.logout();
+
         }).catch(() => {
 
         });
@@ -90,11 +90,11 @@
       }
     },
     mounted() {
-      Webapi.getCurrentUser().then((res) => {
-        if (res.data && res.data.code === 200) {
-          this.sysUserName = res.data.data.userName;
-        }
-      });
+      // Webapi.getCurrentUser().then((res) => {
+      //   if (res.data && res.data.code === 200) {
+      //     this.sysUserName = res.data.data.userName;
+      //   }
+      // });
     }
   }
 
