@@ -1,8 +1,0 @@
-.babelrc
-build
-config
-index.html
-package.json
-package-lock.json
-src
-static

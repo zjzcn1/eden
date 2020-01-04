@@ -14,5 +14,8 @@ export default {
   update${table.className}(params) {
     return axios.put('${table.objectName}/update${table.className}', params);
   },
+  delete${table.className}(id) {
+    return axios.delete('${table.objectName}/delete${table.className}', {params: { id: id }});
+  },
 </#list>
 }

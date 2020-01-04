@@ -25,6 +25,7 @@
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button type="warning" size="small" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
+                    <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -169,6 +170,25 @@
                 );
                 }
             });
+        },
+        handleDelete(index, row) {
+          this.$confirm('确认要删除吗？', '提示', {
+              type: 'warning'
+          }).then(() => {
+              Webapi.delete${table.className}(row.id).then(
+                  res => {
+                      if (res.data && res.data.code === 200) {
+                          this.queryList();
+                          this.$notify({
+                              title: '成功',
+                              message: '提交成功',
+                              type: 'success'
+                          });
+                      }
+                  }
+              );
+          }).catch(() => {
+          });
         }
     }
   }

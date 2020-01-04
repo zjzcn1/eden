@@ -20,7 +20,6 @@
         <include refid="Base_Column_List"/>
         from ${tableName}
         <where>
-            deleted = 0
         </where>
     </select>
 
@@ -29,7 +28,6 @@
         <include refid="Base_Column_List"/>
         from ${tableName}
         <where>
-            deleted = 0
         </where>
     </select>
 
@@ -48,10 +46,9 @@
         WHERE ${primaryKey} = ${primaryKeyValue}
     </update>
 
-    <update id="delete">
-        update ${tableName}
-        set deleted = 1
+    <delete id="delete">
+        delete from ${tableName}
         where ${primaryKey} = ${primaryKeyValue}
-    </update>
+    </delete>
 
 </mapper>
