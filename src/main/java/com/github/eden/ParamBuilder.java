@@ -1,68 +1,62 @@
 package com.github.eden;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ParamBuilder {
 
-    public static String buildControllerFileName(String packageName, String tableName) {
-        String controllerPath = Utils.packageToPath(packageName + ".controller");
-        return controllerPath + Utils.toClassName(tableName) + "Controller.java";
+    public static String buildControllerFileName(String packageName, TableInfo table) {
+        String path = EdenUtils.packageToPath(packageName + ".controller");
+        return path + table.getClassName() + "Controller.java";
     }
 
-    public static String buildServiceFileName(String packageName, String tableName) {
-        String controllerPath = Utils.packageToPath(packageName + ".service");
-        return controllerPath + Utils.toClassName(tableName) + "Service.java";
+    public static String buildServiceFileName(String packageName, TableInfo table) {
+        String path = EdenUtils.packageToPath(packageName + ".service");
+        return path + table.getClassName() + "Service.java";
     }
 
-    public static String buildServiceImplFileName(String packageName, String tableName) {
-        String controllerPath = Utils.packageToPath(packageName + ".service.impl");
-        return controllerPath + Utils.toClassName(tableName) + "ServiceImpl.java";
+    public static String buildEntityFileName(String packageName, TableInfo table) {
+        String path = EdenUtils.packageToPath(packageName + ".entity");
+        return path + table.getClassName() + ".java";
     }
 
-    public static String buildEntityFileName(String packageName, String tableName) {
-        String controllerPath = Utils.packageToPath(packageName + ".entity");
-        return controllerPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + ".java";
+    public static String buildDaoFileName(String packageName, TableInfo table) {
+        String path = EdenUtils.packageToPath(packageName + ".dao");
+        return path + table.getClassName() + "Dao.java";
     }
 
-    public static String buildDaoFileName(String packageName, String tableName) {
-        String controllerPath = Utils.packageToPath(packageName + ".dao");
-        return controllerPath + Utils.toClassName(tableName) + "Dao.java";
+    public static String buildMapperFileName(String packageName, TableInfo table) {
+        String path = "mapper/";
+        return path + table.getClassName() + "Mapper.xml";
     }
 
-    public static String buildMapperFileName(String packageName, String tableName) {
-        String mapperPath = "mapper/";
-        return mapperPath + StrUtil.upperFirst(StrUtil.toCamelCase(tableName)) + "Mapper.xml";
-    }
-
-    public static String buildViewFileName(String packageName, String tableName) {
-        String name = StrUtil.upperFirst(StrUtil.toCamelCase(tableName));
-        return "src/views/" + name + "/" + name + ".vue";
+    public static String buildViewFileName(String packageName, TableInfo table) {
+        return "src/views/" + table.getClassName() + "/" + table.getClassName() + ".vue";
     }
 
     public static String buildCommonPath(String packageName) {
-        return Utils.packageToPath(packageName + ".common");
+        return EdenUtils.packageToPath(packageName + ".common");
     }
 
     public static String buildConfigPath(String packageName) {
-        return Utils.packageToPath(packageName + ".config");
+        return EdenUtils.packageToPath(packageName + ".config");
     }
 
     public static String buildBasePackagePath(String packageName) {
-        return Utils.packageToPath(packageName);
+        return EdenUtils.packageToPath(packageName);
     }
 
-    public static Map<String, Object> buildParam(String packageName, String tableName, List<TableColumn> columns) {
+    public static Map<String, Object> buildParam(String packageName, TableInfo table, List<TableColumn> columns) {
         Map<String, Object> param = new HashMap<>();
-        param.put("date", DateUtil.today());
-        param.put("tableName", tableName);
+        param.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
+        param.put("tableName", table.getTableName());
         param.put("packageName", packageName);
-        param.put("objectName", StrUtil.toCamelCase(tableName));
-        param.put("className", StrUtil.upperFirst(StrUtil.toCamelCase(tableName)));
+        param.put("objectName", table.getObjectName());
+        param.put("className", table.getClassName());
         param.put("entityProperties", generateEntityProperties(columns));
         param.put("tableColumnNames", generateTableColumnNames(columns));
         param.put("tableColumnValues", generateTableColumnValues(columns));

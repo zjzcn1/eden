@@ -1,13 +1,15 @@
 package com.github.eden;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public class DbConnection {
@@ -64,7 +66,7 @@ public class DbConnection {
     }
 
     public static String parseTableComment(String all) {
-        String comment = null;
+        String comment;
         int index = all.indexOf("COMMENT='");
         if (index < 0) {
             return "";
@@ -92,9 +94,9 @@ public class DbConnection {
                 if ("PRI".equalsIgnoreCase(resultSet.getString("KEY"))) {
                     isKey = true;
                 }
-                String propertyName = StrUtil.toCamelCase(name);
+                String propertyName = EdenUtils.toCamelCase(name);
                 String comment = resultSet.getString("COMMENT");
-                columns.add(new TableColumn(name, type, propertyName, isKey, comment));
+                columns.add(new TableColumn(name, type, isKey, comment, propertyName));
             }
             statement.close();
             resultSet.close();

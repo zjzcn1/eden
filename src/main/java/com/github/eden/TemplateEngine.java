@@ -14,12 +14,12 @@ public class TemplateEngine {
     private Configuration configuration;
 
     public TemplateEngine() {
-        String path = new File(TemplateEngine.class.getClassLoader().getResource("ftls").getFile()).getPath();
+        String path = new File(TemplateEngine.class.getClassLoader().getResource("template").getFile()).getPath();
         configuration = new Configuration(Configuration.VERSION_2_3_28);
 
         try {
             if (path.contains("jar")){
-                configuration.setClassForTemplateLoading(TemplateEngine.class, "/ftls");
+                configuration.setClassForTemplateLoading(TemplateEngine.class, "/template");
             } else {
                 configuration.setDirectoryForTemplateLoading(new File(path));
             }

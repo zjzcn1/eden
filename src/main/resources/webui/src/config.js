@@ -1,6 +1,6 @@
 const config = {
   localhost: {
-    baseUrl: "http://localhost:8081"
+    baseUrl: "http://localhost:8080"
   },
   prod: {
   }
@@ -8,8 +8,6 @@ const config = {
 
 const host = location.host;
 let currentEnv = host.match(/\b(alpha|test|localhost)\b|$/)[0] || 'prod';
-
-console.log('Using env config: ' + currentEnv);
 
 export default {
   url() {

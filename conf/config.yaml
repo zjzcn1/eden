@@ -1,7 +1,7 @@
 dbDriverClass: com.mysql.jdbc.Driver
-dbUrl: jdbc:mysql://localhost:3306/bookcase?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&useSSL=false
+dbUrl: jdbc:mysql://localhost:3306/chatbot
 dbUsername: root
 dbPassword: njutzjz126
-projectName: bookcase
-systemName: 机器人后台
-packageName: com.planetengine.bookcase
+projectName: robot
+systemName: 测试系统
+packageName: com.planetengine.system

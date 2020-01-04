@@ -1,14 +1,19 @@
 package com.github.eden;
 
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class CodeGenerator {
@@ -23,123 +28,119 @@ public class CodeGenerator {
         engine = new TemplateEngine();
     }
 
-    public void generateCode() {
-        String projectPath = Utils.getRootPath() + "project/" + config.getProjectName() + "-" + DateUtil.format(new Date(), "yyyyMMdd-HHmmss");
+    public void generateCode() throws IOException {
+        log.info("Starting generate code...");
+        String projectPath = EdenUtils.getRootPath() + "project/" + config.getProjectName() + "-" + DateFormatUtils.format(new Date(), "yyyyMMdd-HHmmss");
         String javaPath = projectPath + "/src/main/java/";
         String resourcePath = projectPath + "/src/main/resources/";
         String packageName = config.getPackageName();
 
-        FileUtil.copy(Utils.getRootPath() + "/src/main/resources/webui", projectPath, true);
+        EdenUtils.copyResources("webui/", projectPath);
 
         List<TableInfo> tableInfos = new ArrayList<>();
         List<String> tables = connection.getTables();
-        for (String table : tables) {
-            TableInfo info = new TableInfo();
-            info.setClassName(table);
-            info.setTableComment(connection.getCommentByTableName(table));
-            info.setClassName(Utils.toClassName(table));
-            info.setObjectName(Utils.toObjectName(table));
-            tableInfos.add(info);
+        for (String tableName : tables) {
+            TableInfo table = new TableInfo();
+            table.setTableName(tableName);
+            table.setTableComment(connection.getCommentByTableName(tableName));
+            table.setClassName(EdenUtils.toBigCamelCase(tableName));
+            table.setObjectName(EdenUtils.toCamelCase(tableName));
+            tableInfos.add(table);
 
-            List<TableColumn> columns = connection.getColumns(table);
+            List<TableColumn> columns = connection.getColumns(tableName);
             // Controller
             Map<String, Object> controllerParam = ParamBuilder.buildParam(packageName, table, columns);
-            String controller = engine.render("Controller.java.ftl", controllerParam);
+            String controller = engine.render("backend/Controller.java.ftl", controllerParam);
             String controllerFile = javaPath + ParamBuilder.buildControllerFileName(packageName, table);
-            Utils.writeFile(controllerFile, controller);
+            FileUtils.write(new File(controllerFile), controller, "UTF-8");
 
             // Service
             Map<String, Object> param = ParamBuilder.buildParam(packageName, table, columns);
-            String service = engine.render("Service.java.ftl", param);
+            String service = engine.render("backend/Service.java.ftl", param);
             String serviceFile = javaPath + ParamBuilder.buildServiceFileName(packageName, table);
-            Utils.writeFile(serviceFile, service);
-
-            // ServiceImpl
-            String serviceImpl = engine.render("ServiceImpl.java.ftl", param);
-            String serviceImplFile = javaPath + ParamBuilder.buildServiceImplFileName(packageName, table);
-            Utils.writeFile(serviceImplFile, serviceImpl);
+            FileUtils.write(new File(serviceFile), service, "UTF-8");
 
             // Dao
-            String dao = engine.render("Dao.java.ftl", param);
+            String dao = engine.render("backend/Dao.java.ftl", param);
             String daoFile = javaPath + ParamBuilder.buildDaoFileName(packageName, table);
-            Utils.writeFile(daoFile, dao);
+            FileUtils.write(new File(daoFile), dao, "UTF-8");
 
             // Entity
-            String entity = engine.render("Entity.java.ftl", param);
+            String entity = engine.render("backend/Entity.java.ftl", param);
             String entityFile = javaPath + ParamBuilder.buildEntityFileName(packageName, table);
-            Utils.writeFile(entityFile, entity);
+            FileUtils.write(new File(entityFile), entity, "UTF-8");
 
             // Mapper
-            String mapper = engine.render("Mapper.xml.ftl", param);
+            String mapper = engine.render("backend/Mapper.xml.ftl", param);
             String mapperFile = resourcePath + ParamBuilder.buildMapperFileName(packageName, table);
-            Utils.writeFile(mapperFile, mapper);
+            FileUtils.write(new File(mapperFile), mapper, "UTF-8");
 
             // UI
             Map<String, Object> viewParams = new HashMap<>();
             viewParams.put("columns", columns);
-            viewParams.put("table", info);
-            String view = engine.render("webui/View.vue.ftl", viewParams);
+            viewParams.put("table", table);
+            String view = engine.render("frontend/View.vue.ftl", viewParams);
             String viewFile = projectPath + "/webui/" + ParamBuilder.buildViewFileName(packageName, table);
-            Utils.writeFile(viewFile, view);
+            FileUtils.write(new File(viewFile), view, "UTF-8");
         }
 
         Map<String, Object> param= new HashMap<>();
         param.put("packageName", packageName);
         param.put("projectName", config.getProjectName());
         // ErrorCode.java
-        String errorCode = engine.render("common/ErrorCode.java.ftl", param);
+        String errorCode = engine.render("backend/common/ErrorCode.java.ftl", param);
         String errorCodeFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ErrorCode.java";
-        Utils.writeFile(errorCodeFile, errorCode);
+        FileUtils.write(new File(errorCodeFile), errorCode, "UTF-8");
 
         // ExceptionHandler.java
-        String exceptionHandler = engine.render("common/ExceptionHandler.java.ftl", param);
+        String exceptionHandler = engine.render("backend/common/ExceptionHandler.java.ftl", param);
         String exceptionHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ExceptionHandler.java";
-        Utils.writeFile(exceptionHandlerFile, exceptionHandler);
+        FileUtils.write(new File(exceptionHandlerFile), exceptionHandler, "UTF-8");
 
         // Page.java
-        String page = engine.render("common/Page.java.ftl", param);
+        String page = engine.render("backend/common/Page.java.ftl", param);
         String pageFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Page.java";
-        Utils.writeFile(pageFile, page);
+        FileUtils.write(new File(pageFile), page, "UTF-8");
 
-        // Page.java
-        String pageable = engine.render("common/Pageable.java.ftl", param);
+        // Pageable.java
+        String pageable = engine.render("backend/common/Pageable.java.ftl", param);
         String pageableFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Pageable.java";
-        Utils.writeFile(pageableFile, pageable);
+        FileUtils.write(new File(pageableFile), pageable, "UTF-8");
 
         // PagePlugin.java
-        String pagePlugin = engine.render("common/PagePlugin.java.ftl", param);
+        String pagePlugin = engine.render("backend/common/PagePlugin.java.ftl", param);
         String pagePluginFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "PagePlugin.java";
-        Utils.writeFile(pagePluginFile, pagePlugin);
+        FileUtils.write(new File(pagePluginFile), pagePlugin, "UTF-8");
 
         // PagePlugin.java
-        String result = engine.render("common/Result.java.ftl", param);
+        String result = engine.render("backend/common/Result.java.ftl", param);
         String resultFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Result.java";
-        Utils.writeFile(resultFile, result);
+        FileUtils.write(new File(resultFile), result, "UTF-8");
 
         // ServiceException.java
-        String serviceException = engine.render("common/ServiceException.java.ftl", param);
+        String serviceException = engine.render("backend/common/ServiceException.java.ftl", param);
         String serviceExceptionFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ServiceException.java";
-        Utils.writeFile(serviceExceptionFile, serviceException);
+        FileUtils.write(new File(serviceExceptionFile), serviceException, "UTF-8");
 
         // CorsConfig.java
-        String corsConfig = engine.render("config/CorsConfig.java.ftl", param);
+        String corsConfig = engine.render("backend/config/CorsConfig.java.ftl", param);
         String corsConfigFile = javaPath + ParamBuilder.buildConfigPath(packageName) + "CorsConfig.java";
-        Utils.writeFile(corsConfigFile, corsConfig);
+        FileUtils.write(new File(corsConfigFile), corsConfig, "UTF-8");
 
         // SpringConfig.java
-        String springConfig = engine.render("config/SpringConfig.java.ftl", param);
+        String springConfig = engine.render("backend/config/SpringConfig.java.ftl", param);
         String springConfigFile = javaPath + ParamBuilder.buildConfigPath(packageName) + "SpringConfig.java";
-        Utils.writeFile(springConfigFile, springConfig);
+        FileUtils.write(new File(springConfigFile), springConfig, "UTF-8");
 
         // Application.java
-        String application = engine.render("Application.java.ftl", param);
+        String application = engine.render("backend/Application.java.ftl", param);
         String applicationFile = javaPath + ParamBuilder.buildBasePackagePath(packageName) + "Application.java";
-        Utils.writeFile(applicationFile, application);
+        FileUtils.write(new File(applicationFile), application, "UTF-8");
 
         // application.properties
-        String applicationProp = engine.render("application.properties.ftl", param);
+        String applicationProp = engine.render("backend/application.properties.ftl", param);
         String applicationPropFile = projectPath + "/config/application.properties";
-        Utils.writeFile(applicationPropFile, applicationProp);
+        FileUtils.write(new File(applicationPropFile), applicationProp, "UTF-8");
 
         // application-dev.properties
         param.put("applicationMain", packageName + ".Application");
@@ -147,54 +148,56 @@ public class CodeGenerator {
         param.put("dbUrl", config.getDbUrl());
         param.put("dbUsername", config.getDbUsername());
         param.put("dbPassword", config.getDbPassword());
-        String applicationDevProp = engine.render("application-dev.properties.ftl", param);
+        String applicationDevProp = engine.render("backend/application-dev.properties.ftl", param);
         String applicationDevPropFile = projectPath + "/config/application-dev.properties";
-        Utils.writeFile(applicationDevPropFile, applicationDevProp);
+        FileUtils.write(new File(applicationDevPropFile), applicationDevProp, "UTF-8");
 
         // application-prod.properties
-        String applicationProdProp = engine.render("application-prod.properties.ftl", param);
+        String applicationProdProp = engine.render("backend/application-prod.properties.ftl", param);
         String applicationProdPropFile = projectPath + "/config/application-prod.properties";
-        Utils.writeFile(applicationProdPropFile, applicationProdProp);
+        FileUtils.write(new File(applicationProdPropFile), applicationProdProp, "UTF-8");
 
         // assembly.xml
-        String assembly = engine.render("release.xml.ftl", param);
+        String assembly = engine.render("backend/release.xml.ftl", param);
         String assemblyFile = projectPath + "/release.xml";
-        Utils.writeFile(assemblyFile, assembly);
+        FileUtils.write(new File(assemblyFile), assembly, "UTF-8");
 
         // pom.xml
-        String pom = engine.render("pom.xml.ftl", param);
+        String pom = engine.render("backend/pom.xml.ftl", param);
         String pomFile = projectPath + "/pom.xml";
-        Utils.writeFile(pomFile, pom);
+        FileUtils.write(new File(pomFile), pom, "UTF-8");
 
         // start.sh
-        String start = engine.render("start.sh.ftl", param);
-        String startFile = projectPath + "/bin/start.sh";
-        Utils.writeFile(startFile, start);
+        String startSh = engine.render("backend/start.sh.ftl", param);
+        String startShFile = projectPath + "/bin/start.sh";
+        FileUtils.write(new File(startShFile), startSh, "UTF-8");
 
         // webapi
         Map<String, Object> webapiParams = new HashMap<>();
         webapiParams.put("tables", tableInfos);
-        String webapi = engine.render("webui/webapi.js.ftl", webapiParams);
+        String webapi = engine.render("frontend/webapi.js.ftl", webapiParams);
         String webapiFile = projectPath + "/webui/src/webapi.js";
-        Utils.writeFile(webapiFile, webapi);
+        FileUtils.write(new File(webapiFile), webapi, "UTF-8");
 
         // ui routes
-        String routes = engine.render("webui/routes.js.ftl", webapiParams);
+        String routes = engine.render("frontend/routes.js.ftl", webapiParams);
         String routesFile = projectPath + "/webui/src/routes.js";
-        Utils.writeFile(routesFile, routes);
+        FileUtils.write(new File(routesFile), routes, "UTF-8");
 
         // ui Main.vue
         Map<String, Object> mainUiParams = new HashMap<>();
         mainUiParams.put("systemName", config.getSystemName());
-        String mainUi = engine.render("webui/Main.vue.ftl", mainUiParams);
+        String mainUi = engine.render("frontend/Main.vue.ftl", mainUiParams);
         String mainUiFile = projectPath + "/webui/src/views/Main.vue";
-        Utils.writeFile(mainUiFile, mainUi);
+        FileUtils.write(new File(mainUiFile), mainUi, "UTF-8");
         // ui index.html
         Map<String, Object> indexParams = new HashMap<>();
         indexParams.put("systemName", config.getSystemName());
-        String indexUi = engine.render("webui/index.html.ftl", indexParams);
+        String indexUi = engine.render("frontend/index.html.ftl", indexParams);
         String indexUiFile = projectPath + "/webui/index.html";
-        Utils.writeFile(indexUiFile, indexUi);
+        FileUtils.write(new File(indexUiFile), indexUi, "UTF-8");
+
+        log.info("Finish generate code.");
     }
 
 }

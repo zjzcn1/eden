@@ -3,31 +3,30 @@ import App from './App'
 
 import Element from 'element-ui'
 import { Notification } from 'element-ui';
-import './styles/element-variables.scss'
+import './styles/style-variables.scss'
 import VueRouter from 'vue-router'
-import store from './vuex/store'
 import routes from './routes'
-
-import 'font-awesome/css/font-awesome.min.css'
-
-import axios from 'axios';
-import {formatDate} from "./common/date";
 import config from './config'
+import 'font-awesome/css/font-awesome.min.css'
+import axios from 'axios';
+
 
 Vue.filter('formatDate', (value) => {
   return new Date(value).format('yyyy-MM-dd hh:mm:ss');
 });
 
 Vue.use(Element, {
-  size: 'medium'
+  size: 'small'
 });
+
 Vue.use(VueRouter);
 axios.defaults.baseURL = config.url()['baseUrl'];
 axios.defaults.withCredentials = false;
 
 const router = new VueRouter({
   routes
-})
+});
+
 axios.interceptors.response.use(
   response => {
     if (response.data.code < 400) {
@@ -59,7 +58,6 @@ axios.interceptors.response.use(
 
 new Vue({
   router,
-  store,
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');
 
