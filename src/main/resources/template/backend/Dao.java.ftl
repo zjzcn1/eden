@@ -3,24 +3,24 @@ package ${packageName}.dao;
 import java.util.List;
 import ${packageName}.common.Page;
 import ${packageName}.common.Pageable;
-import ${packageName}.entity.${className};
+import ${packageName}.entity.${table.className};
 import org.apache.ibatis.annotations.Mapper;
 
 /**
  * Date  ${date}
  */
 @Mapper
-public interface ${className}Dao {
+public interface ${table.className}Dao {
 
-    ${className} getById(Long id);
+    ${table.className} getById(Long id);
 
-    List<${className}> findAll();
+    List<${table.className}> findAll();
 
-    Page<${className}> findByPageable(Pageable pageable);
+    Page<${table.className}> findByPageable(Pageable pageable);
 
-    Long insert(${className} ${objectName});
+    Long insert(${table.className} ${table.objectName});
 
-    int update(${className} ${objectName});
+    int update(${table.className} ${table.objectName});
 
     int delete(Long id);
 

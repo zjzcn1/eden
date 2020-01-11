@@ -34,7 +34,7 @@ import java.util.Properties;
 })
 public class PagePlugin implements Interceptor {
 
-    private static Logger log = LoggerFactory.getLogger(${packageName}.common.PagePlugin.class);
+    private static Logger log = LoggerFactory.getLogger(PagePlugin.class);
 
     private static final int MAPPED_STATEMENT_INDEX = 0;
     private static final int PARAMETER_INDEX = 1;
@@ -45,7 +45,7 @@ public class PagePlugin implements Interceptor {
         final Object[] queryArgs = invocation.getArgs();
         final Object parameter = queryArgs[PARAMETER_INDEX];
 
-        ${packageName}.common.Pageable pageable = findObjectFromParams(parameter, ${packageName}.common.Pageable.class);
+        Pageable pageable = findObjectFromParams(parameter, Pageable.class);
         if(pageable == null) {
             return invocation.proceed();
         }

@@ -4,8 +4,8 @@ import java.util.List;
 import ${packageName}.common.Page;
 import ${packageName}.common.Pageable;
 import ${packageName}.common.Result;
-import ${packageName}.entity.${className};
-import ${packageName}.service.${className}Service;
+import ${packageName}.entity.${table.className};
+import ${packageName}.service.${table.className}Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,43 +13,43 @@ import org.springframework.web.bind.annotation.*;
  * Date  ${date}
  */
 @RestController
-public class ${className}Controller {
+public class ${table.className}Controller {
 
     @Autowired
-    private ${className}Service ${objectName}Service;
+    private ${table.className}Service ${table.objectName}Service;
 
-    @RequestMapping(path = "${objectName}/listAll${className}", method = RequestMethod.POST)
+    @RequestMapping(path = "${table.objectName}/listAll${table.className}", method = RequestMethod.POST)
     @ResponseBody
-    public Result<List<${className}>> listAll${className}() {
-        List<${className}> list =${objectName}Service.findAll${className}();
+    public Result<List<${table.className}>> listAll${table.className}() {
+        List<${table.className}> list =${table.objectName}Service.findAll${table.className}();
         return Result.success(list);
     }
 
-    @RequestMapping(path = "${objectName}/list${className}", method = RequestMethod.POST)
+    @RequestMapping(path = "${table.objectName}/list${table.className}", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Page<${className}>> list${className}(@RequestBody Pageable pageable) {
-        Page<${className}> page =${objectName}Service.findByPageable(pageable);
+    public Result<Page<${table.className}>> list${table.className}(@RequestBody Pageable pageable) {
+        Page<${table.className}> page =${table.objectName}Service.findByPageable(pageable);
         return Result.success(page);
     }
 
-    @RequestMapping(path = "${objectName}/create${className}", method = RequestMethod.POST)
+    @RequestMapping(path = "${table.objectName}/create${table.className}", method = RequestMethod.POST)
     @ResponseBody
-    public Result<${className}> add${className}(@RequestBody ${className} ${objectName}) {
-        ${objectName}Service.insert${className}(${objectName});
+    public Result<${table.className}> add${table.className}(@RequestBody ${table.className} ${table.objectName}) {
+        ${table.objectName}Service.insert${table.className}(${table.objectName});
         return Result.success();
     }
 
-    @RequestMapping(path = "${objectName}/update${className}", method = RequestMethod.PUT)
+    @RequestMapping(path = "${table.objectName}/update${table.className}", method = RequestMethod.PUT)
     @ResponseBody
-    public Result<Void> update${className}(@RequestBody ${className} ${objectName}) {
-        ${objectName}Service.update${className}(${objectName});
+    public Result<Void> update${table.className}(@RequestBody ${table.className} ${table.objectName}) {
+        ${table.objectName}Service.update${table.className}(${table.objectName});
         return Result.success();
     }
 
-    @RequestMapping(path = "${objectName}/delete${className}", method = RequestMethod.DELETE)
+    @RequestMapping(path = "${table.objectName}/delete${table.className}", method = RequestMethod.DELETE)
     @ResponseBody
-    public Result<Void> delete${className}(Long id) {
-        ${objectName}Service.delete${className}(id);
+    public Result<Void> delete${table.className}(Long id) {
+        ${table.objectName}Service.delete${table.className}(id);
         return Result.success();
     }
 

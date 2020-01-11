@@ -29,7 +29,7 @@ let routes = [
     path: '/',
     component: Main,
     name: '',
-    icon: 'fa fa-dashboard',
+    icon: 'fa fa-circle-o',
     leaf: true,//只有一个节点
     children: [
       { path: '/${table.objectName}/list${table.className}', component: ${table.className}, name: '${table.tableComment}管理' }

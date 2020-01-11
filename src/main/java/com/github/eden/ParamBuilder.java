@@ -9,33 +9,33 @@ import java.util.Map;
 
 public class ParamBuilder {
 
-    public static String buildControllerFileName(String packageName, TableInfo table) {
+    public static String buildControllerFileName(String packageName, String className) {
         String path = EdenUtils.packageToPath(packageName + ".controller");
-        return path + table.getClassName() + "Controller.java";
+        return path + className + "Controller.java";
     }
 
-    public static String buildServiceFileName(String packageName, TableInfo table) {
+    public static String buildServiceFileName(String packageName, String className) {
         String path = EdenUtils.packageToPath(packageName + ".service");
-        return path + table.getClassName() + "Service.java";
+        return path + className + "Service.java";
     }
 
-    public static String buildEntityFileName(String packageName, TableInfo table) {
+    public static String buildEntityFileName(String packageName, String className) {
         String path = EdenUtils.packageToPath(packageName + ".entity");
-        return path + table.getClassName() + ".java";
+        return path + className + ".java";
     }
 
-    public static String buildDaoFileName(String packageName, TableInfo table) {
+    public static String buildDaoFileName(String packageName, String className) {
         String path = EdenUtils.packageToPath(packageName + ".dao");
-        return path + table.getClassName() + "Dao.java";
+        return path + className + "Dao.java";
     }
 
-    public static String buildMapperFileName(String packageName, TableInfo table) {
+    public static String buildMapperFileName(String className) {
         String path = "mapper/";
-        return path + table.getClassName() + "Mapper.xml";
+        return path + className + "Mapper.xml";
     }
 
-    public static String buildViewFileName(String packageName, TableInfo table) {
-        return "src/views/" + table.getClassName() + "/" + table.getClassName() + ".vue";
+    public static String buildViewFileName(String className) {
+        return "src/views/" + className + "/" + className + ".vue";
     }
 
     public static String buildCommonPath(String packageName) {
@@ -50,31 +50,50 @@ public class ParamBuilder {
         return EdenUtils.packageToPath(packageName);
     }
 
-    public static Map<String, Object> buildParam(String packageName, TableInfo table, List<TableColumn> columns) {
+    public static Map<String, Object> buildParam(String packageName, TableInfo table, List<TableColumn> columns, Config config) {
         Map<String, Object> param = new HashMap<>();
         param.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
-        param.put("tableName", table.getTableName());
         param.put("packageName", packageName);
-        param.put("objectName", table.getObjectName());
-        param.put("className", table.getClassName());
+
+        param.put("table", table);
+        param.put("columns", columns);
+
         param.put("entityProperties", generateEntityProperties(columns));
-        param.put("tableColumnNames", generateTableColumnNames(columns));
-        param.put("tableColumnValues", generateTableColumnValues(columns));
-        param.put("updateProperties", generateUpdateProperties(columns));
+        param.put("baseColumnNames", generateBaseColumnNames(columns));
+        param.put("insertColumnNames", generateInsertColumnNames(columns));
+        param.put("insertColumnValues", generateInsertColumnValues(columns));
+        param.put("updateColumnValues", generateUpdateColumnValues(columns));
+
+        // find special column
         TableColumn primaryKeyColumn = getPrimaryKeyColumn(columns);
         if (primaryKeyColumn == null) {
-            param.put("primaryKey", "id");
-            param.put("primaryKeyValue", "#{id}");
-        } else {
-            param.put("primaryKey", primaryKeyColumn.getColumnName());
-            param.put("primaryKeyValue", "#{" + primaryKeyColumn.getPropertyName() + "}");
+            throw new RuntimeException("Database table='" + table.getTableName() + "' not have primary key.");
+        }
+        param.put("primaryKeyColumn", primaryKeyColumn.getColumnName());
+        param.put("primaryKeyProperty", "#{" + primaryKeyColumn.getPropertyName() + "}");
+
+        for (TableColumn column : columns) {
+            if (column.getColumnName().equals(config.getDeletedColumn())) {
+                param.put("deletedColumn", column.getColumnName());
+            }
+        }
+
+        // column width
+        for (TableColumn column : columns) {
+            if (column.getIsPrimaryKey()) {
+                column.setColumnWidth(80);
+            } else if ("Date".equals(column.getTypeName())) {
+                column.setColumnWidth(140);
+            } else if (column.getIsEnabledColumn()) {
+                column.setColumnWidth(80);
+            }
         }
         return param;
     }
 
     private static TableColumn getPrimaryKeyColumn(List<TableColumn> columns) {
         for (TableColumn column : columns) {
-            if (column.isPrimaryKey()) {
+            if (column.getIsPrimaryKey()) {
                 return column;
             }
         }
@@ -84,12 +103,16 @@ public class ParamBuilder {
     private static String generateEntityProperties(List<TableColumn> columns) {
         StringBuilder sb = new StringBuilder();
         for (TableColumn column : columns) {
-            sb.append("    private ").append(column.getTypeName()).append(" ").append(column.getPropertyName()).append(";\n");
+            if (column.getIsEnabledColumn()) {
+                sb.append("    private ").append("Boolean ").append(column.getPropertyName()).append(";\n");
+            } else if (!column.getIsDeletedColumn()) {
+                sb.append("    private ").append(column.getTypeName()).append(" ").append(column.getPropertyName()).append(";\n");
+            }
         }
         return sb.toString();
     }
 
-    private static String generateTableColumnNames(List<TableColumn> columns) {
+    private static String generateBaseColumnNames(List<TableColumn> columns) {
         StringBuilder sb = new StringBuilder();
         for (TableColumn column : columns) {
             sb.append(column.getColumnName()).append(", ");
@@ -97,18 +120,47 @@ public class ParamBuilder {
         return sb.toString().substring(0, sb.toString().length() - 2);
     }
 
-    private static String generateTableColumnValues(List<TableColumn> columns) {
+    private static String generateInsertColumnNames(List<TableColumn> columns) {
         StringBuilder sb = new StringBuilder();
         for (TableColumn column : columns) {
-            sb.append("#{").append(column.getPropertyName()).append("}, ");
+            if (!column.getIsPrimaryKey()
+                    && !column.getIsCreateTimeColumn()
+                    && !column.getIsUpdateTimeColumn()
+                    && !column.getIsDeletedColumn()
+                    && !column.getIsEnabledColumn()) {
+                sb.append(column.getColumnName()).append(", ");
+            }
         }
         return sb.toString().substring(0, sb.toString().length() - 2);
     }
 
-    private static String generateUpdateProperties(List<TableColumn> columns) {
+    private static String generateInsertColumnValues(List<TableColumn> columns) {
         StringBuilder sb = new StringBuilder();
         for (TableColumn column : columns) {
-            sb.append(column.getColumnName()).append(" = #{").append(column.getPropertyName()).append("}, ");
+            if (!column.getIsPrimaryKey()
+                    && !column.getIsCreateTimeColumn()
+                    && !column.getIsUpdateTimeColumn()
+                    && !column.getIsDeletedColumn()
+                    && !column.getIsEnabledColumn()) {
+                sb.append("#{").append(column.getPropertyName()).append("}, ");
+            }
+        }
+        if (sb.length() > 2) {
+            return sb.substring(0, sb.length() - 2);
+        } else {
+            return sb.toString();
+        }
+    }
+
+    private static String generateUpdateColumnValues(List<TableColumn> columns) {
+        StringBuilder sb = new StringBuilder();
+        for (TableColumn column : columns) {
+            if (!column.getIsPrimaryKey()
+                    && !column.getIsCreateTimeColumn()
+                    && !column.getIsUpdateTimeColumn()
+                    && !column.getIsDeletedColumn()) {
+                sb.append(column.getColumnName()).append(" = #{").append(column.getPropertyName()).append("}, ");
+            }
         }
         return sb.toString().substring(0, sb.toString().length() - 2);
     }

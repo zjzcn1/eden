@@ -2,13 +2,12 @@ package com.github.eden;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ public class CodeGenerator {
     }
 
     public void generateCode() throws IOException {
-        log.info("Starting generate code...");
+        log.info("Generate code started...");
         String projectPath = EdenUtils.getRootPath() + "project/" + config.getProjectName() + "-" + DateFormatUtils.format(new Date(), "yyyyMMdd-HHmmss");
         String javaPath = projectPath + "/src/main/java/";
         String resourcePath = projectPath + "/src/main/resources/";
@@ -40,6 +39,10 @@ public class CodeGenerator {
         List<TableInfo> tableInfos = new ArrayList<>();
         List<String> tables = connection.getTables();
         for (String tableName : tables) {
+            if (CollectionUtils.isNotEmpty(config.getUnusedTables()) && config.getUnusedTables().contains(tableName)) {
+                continue;
+            }
+
             TableInfo table = new TableInfo();
             table.setTableName(tableName);
             table.setTableComment(connection.getCommentByTableName(tableName));
@@ -48,43 +51,50 @@ public class CodeGenerator {
             tableInfos.add(table);
 
             List<TableColumn> columns = connection.getColumns(tableName);
+            for (TableColumn column : columns) {
+                String propertyName = EdenUtils.toCamelCase(column.getColumnName());
+                column.setPropertyName(propertyName);
+                column.setIsCreateTimeColumn(column.getColumnName().equals(config.getCreateTimeColumn()));
+                column.setIsUpdateTimeColumn(column.getColumnName().equals(config.getUpdateTimeColumn()));
+                column.setIsDeletedColumn(column.getColumnName().equals(config.getDeletedColumn()));
+                column.setIsEnabledColumn(column.getColumnName().equals(config.getEnabledColumn()));
+            }
+
+            // build param
+            Map<String, Object> param = ParamBuilder.buildParam(packageName, table, columns, config);
+
             // Controller
-            Map<String, Object> controllerParam = ParamBuilder.buildParam(packageName, table, columns);
-            String controller = engine.render("backend/Controller.java.ftl", controllerParam);
-            String controllerFile = javaPath + ParamBuilder.buildControllerFileName(packageName, table);
+            String controller = engine.render("backend/Controller.java.ftl", param);
+            String controllerFile = javaPath + ParamBuilder.buildControllerFileName(packageName, table.getClassName());
             FileUtils.write(new File(controllerFile), controller, "UTF-8");
 
             // Service
-            Map<String, Object> param = ParamBuilder.buildParam(packageName, table, columns);
             String service = engine.render("backend/Service.java.ftl", param);
-            String serviceFile = javaPath + ParamBuilder.buildServiceFileName(packageName, table);
+            String serviceFile = javaPath + ParamBuilder.buildServiceFileName(packageName, table.getClassName());
             FileUtils.write(new File(serviceFile), service, "UTF-8");
 
             // Dao
             String dao = engine.render("backend/Dao.java.ftl", param);
-            String daoFile = javaPath + ParamBuilder.buildDaoFileName(packageName, table);
+            String daoFile = javaPath + ParamBuilder.buildDaoFileName(packageName, table.getClassName());
             FileUtils.write(new File(daoFile), dao, "UTF-8");
 
             // Entity
             String entity = engine.render("backend/Entity.java.ftl", param);
-            String entityFile = javaPath + ParamBuilder.buildEntityFileName(packageName, table);
+            String entityFile = javaPath + ParamBuilder.buildEntityFileName(packageName, table.getClassName());
             FileUtils.write(new File(entityFile), entity, "UTF-8");
 
             // Mapper
             String mapper = engine.render("backend/Mapper.xml.ftl", param);
-            String mapperFile = resourcePath + ParamBuilder.buildMapperFileName(packageName, table);
+            String mapperFile = resourcePath + ParamBuilder.buildMapperFileName(table.getClassName());
             FileUtils.write(new File(mapperFile), mapper, "UTF-8");
 
             // UI
-            Map<String, Object> viewParams = new HashMap<>();
-            viewParams.put("columns", columns);
-            viewParams.put("table", table);
-            String view = engine.render("frontend/View.vue.ftl", viewParams);
-            String viewFile = projectPath + "/webui/" + ParamBuilder.buildViewFileName(packageName, table);
+            String view = engine.render("frontend/View.vue.ftl", param);
+            String viewFile = projectPath + "/webui/" + ParamBuilder.buildViewFileName(table.getClassName());
             FileUtils.write(new File(viewFile), view, "UTF-8");
         }
 
-        Map<String, Object> param= new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
         param.put("packageName", packageName);
         param.put("projectName", config.getProjectName());
         // ErrorCode.java
@@ -194,10 +204,10 @@ public class CodeGenerator {
         Map<String, Object> indexParams = new HashMap<>();
         indexParams.put("systemName", config.getSystemName());
         String indexUi = engine.render("frontend/index.html.ftl", indexParams);
-        String indexUiFile = projectPath + "/webui/index.html";
+        String indexUiFile = projectPath + "/webui/public/index.html";
         FileUtils.write(new File(indexUiFile), indexUi, "UTF-8");
 
-        log.info("Finish generate code.");
+        log.info("Generate code completed.");
     }
 
 }

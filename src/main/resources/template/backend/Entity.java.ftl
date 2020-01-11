@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * Date  ${date}
  */
 @Data
-public class ${className}{
+public class ${table.className}{
 
 ${entityProperties}
 

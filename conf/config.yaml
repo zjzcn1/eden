@@ -1,7 +1,13 @@
 dbDriverClass: com.mysql.jdbc.Driver
-dbUrl: jdbc:mysql://localhost:3306/chatbot
+dbUrl: jdbc:mysql://localhost:3306/chatbot?characterEncoding=utf8&useSSL=false
 dbUsername: root
 dbPassword: njutzjz126
-projectName: robot
-systemName: 测试系统
-packageName: com.planetengine.system
+projectName: chatbot
+systemName: 机器人对话系统
+packageName: com.planetengine.chatbot
+
+unusedTables: [rbac_role_perm_rel, rbac_staff_role_rel]
+createTimeColumn: create_time
+updateTimeColumn: update_time
+deletedColumn: deleted
+enabledColumn: enabled

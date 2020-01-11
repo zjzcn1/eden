@@ -2,10 +2,10 @@ package com.github.eden;
 
 import lombok.Data;
 
-import java.io.Serializable;
+import java.util.List;
 
 @Data
-public class Config implements Serializable {
+public class Config {
 
     private String projectName;
     private String systemName;
@@ -15,4 +15,9 @@ public class Config implements Serializable {
     private String dbUsername;
     private String dbPassword;
 
+    private List<String> unusedTables;
+    private String createTimeColumn;
+    private String updateTimeColumn;
+    private String deletedColumn;
+    private String enabledColumn;
 }

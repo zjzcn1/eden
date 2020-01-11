@@ -16,6 +16,8 @@ public class Eden {
         CodeGenerator generator = new CodeGenerator(config);
 
         generator.generateCode();
+
+        System.out.println(config.getUnusedTables());
     }
 
 }

@@ -94,9 +94,14 @@ public class DbConnection {
                 if ("PRI".equalsIgnoreCase(resultSet.getString("KEY"))) {
                     isKey = true;
                 }
-                String propertyName = EdenUtils.toCamelCase(name);
                 String comment = resultSet.getString("COMMENT");
-                columns.add(new TableColumn(name, type, isKey, comment, propertyName));
+
+                TableColumn column = new TableColumn();
+                column.setColumnName(name);
+                column.setTypeName(type);
+                column.setComment(comment);
+                column.setIsPrimaryKey(isKey);
+                columns.add(column);
             }
             statement.close();
             resultSet.close();

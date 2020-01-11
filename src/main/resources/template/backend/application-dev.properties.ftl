@@ -6,6 +6,7 @@ server.session-timeout=60
 server.tomcat.max-threads=800
 server.tomcat.connector.max-http-header-size=102400000
 logging.level.root=DEBUG
+logging.level.${packageName}.dao=debug
 
 #上传文件最大容量
 spring.http.multipart.maxFileSize=1000Mb
@@ -27,4 +28,5 @@ spring.datasource.idle-time-out=60000
 spring.datasource.connection-init-sql= set names utf8mb4
 
 mybatis.configuration.map-underscore-to-camel-case=true
+mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
 mybatis.mapper-locations=classpath*:mapper/*Mapper.xml

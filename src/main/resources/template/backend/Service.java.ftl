@@ -3,8 +3,8 @@ package ${packageName}.service;
 import java.util.List;
 import ${packageName}.common.Page;
 import ${packageName}.common.Pageable;
-import ${packageName}.entity.${className};
-import ${packageName}.dao.${className}Dao;
+import ${packageName}.entity.${table.className};
+import ${packageName}.dao.${table.className}Dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,35 +14,35 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class ${className}Service {
+public class ${table.className}Service {
 
     @Autowired
-    private ${className}Dao ${objectName}Dao;
+    private ${table.className}Dao ${table.objectName}Dao;
 
-    public ${className} get${className}(Long id) {
-        return ${objectName}Dao.getById(id);
+    public ${table.className} get${table.className}(Long id) {
+        return ${table.objectName}Dao.getById(id);
     }
 
-    public List<${className}> findAll${className}() {
-        return ${objectName}Dao.findAll();
+    public List<${table.className}> findAll${table.className}() {
+        return ${table.objectName}Dao.findAll();
     }
 
-    public Page<${className}> findByPageable(Pageable pageable) {
-        return ${objectName}Dao.findByPageable(pageable);
+    public Page<${table.className}> findByPageable(Pageable pageable) {
+        return ${table.objectName}Dao.findByPageable(pageable);
     }
 
-    public Long insert${className}(${className} ${objectName}) {
-        log.info("Insert ${objectName}={}", ${objectName});
-        return ${objectName}Dao.insert(${objectName});
+    public Long insert${table.className}(${table.className} ${table.objectName}) {
+        log.info("Insert ${table.objectName}={}", ${table.objectName});
+        return ${table.objectName}Dao.insert(${table.objectName});
     }
 
-    public int update${className}(${className} ${objectName}) {
-        log.info("Update ${objectName}={}", ${objectName});
-        return ${objectName}Dao.update(${objectName});
+    public int update${table.className}(${table.className} ${table.objectName}) {
+        log.info("Update ${table.objectName}={}", ${table.objectName});
+        return ${table.objectName}Dao.update(${table.objectName});
     }
 
-    public int delete${className}(Long id) {
-        log.info("Delete ${objectName}, id={}", id);
-        return ${objectName}Dao.delete(id);
+    public int delete${table.className}(Long id) {
+        log.info("Delete ${table.objectName}, id={}", id);
+        return ${table.objectName}Dao.delete(id);
     }
 }
