@@ -153,73 +153,71 @@
           }
         );
       },
-        handleAdd() {
-            this.addFormVisible = true;
-            this.addForm = {
-                enable: true
-            };
-        },
-        addSubmit() {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.addFormVisible = false;
-                    Webapi.create${table.className}(this.addForm).then(
-                            res => {
-                        if (res.data && res.data.code === 200) {
-                        this.queryList();
-                        this.$notify({
-                            title: '成功',
-                            message: '提交成功',
-                            type: 'success'
-                        });
-                    }
-                }
-                );
-                }
-            });
-        },
-        handleEdit(index, row) {
-            this.editFormVisible = true;
-            this.editForm = Object.assign({}, row);
-        },
-        editSubmit() {
-            this.$refs.editForm.validate((valid) => {
-                if (valid) {
-                    this.editFormVisible = false;
-                    Webapi.update${table.className}(this.editForm).then(
-                            res => {
-                        if (res.data && res.data.code === 200) {
-                        this.queryList();
-                        this.$notify({
-                            title: '成功',
-                            message: '提交成功',
-                            type: 'success'
-                        });
-                    }
-                }
-                );
-                }
-            });
-        },
-        handleDelete(index, row) {
-          this.$confirm('确认要删除吗？', '提示', {
-              type: 'warning'
-          }).then(() => {
-              Webapi.delete${table.className}(row.id).then(
-                  res => {
+      handleAdd() {
+          this.addFormVisible = true;
+          this.addForm = {};
+      },
+      addSubmit() {
+          this.$refs.addForm.validate((valid) => {
+              if (valid) {
+                  this.addFormVisible = false;
+                  Webapi.create${table.className}(this.addForm).then(
+                          res => {
                       if (res.data && res.data.code === 200) {
-                          this.queryList();
-                          this.$notify({
-                              title: '成功',
-                              message: '提交成功',
-                              type: 'success'
-                          });
-                      }
+                      this.queryList();
+                      this.$notify({
+                          title: '成功',
+                          message: '提交成功',
+                          type: 'success'
+                      });
                   }
+              }
               );
-          }).catch(() => {
+              }
           });
-        }
+      },
+      handleEdit(index, row) {
+          this.editFormVisible = true;
+          this.editForm = Object.assign({}, row);
+      },
+      editSubmit() {
+        this.$refs.editForm.validate((valid) => {
+              if (valid) {
+                  this.editFormVisible = false;
+                  Webapi.update${table.className}(this.editForm).then(
+                          res => {
+                      if (res.data && res.data.code === 200) {
+                      this.queryList();
+                      this.$notify({
+                          title: '成功',
+                          message: '提交成功',
+                          type: 'success'
+                      });
+                  }
+              }
+              );
+              }
+          });
+      },
+      handleDelete(index, row) {
+        this.$confirm('确认要删除吗？', '提示', {
+            type: 'warning'
+        }).then(() => {
+            Webapi.delete${table.className}(row.id).then(
+                res => {
+                    if (res.data && res.data.code === 200) {
+                        this.queryList();
+                        this.$notify({
+                            title: '成功',
+                            message: '提交成功',
+                            type: 'success'
+                        });
+                    }
+                }
+            );
+        }).catch(() => {
+        });
+      }
     }
   }
 </script>

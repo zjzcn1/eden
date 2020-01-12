@@ -115,7 +115,9 @@ public class ParamBuilder {
     private static String generateBaseColumnNames(List<TableColumn> columns) {
         StringBuilder sb = new StringBuilder();
         for (TableColumn column : columns) {
-            sb.append(column.getColumnName()).append(", ");
+            if (!column.getIsDeletedColumn()) {
+                sb.append(column.getColumnName()).append(", ");
+            }
         }
         return sb.toString().substring(0, sb.toString().length() - 2);
     }

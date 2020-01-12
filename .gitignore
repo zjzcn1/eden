@@ -13,6 +13,7 @@
 .DS_Store
 *.log
 *.log.*-*-*
+/logs/*
 
 # These are needed if running in IDE without properties set
 /ibderby
