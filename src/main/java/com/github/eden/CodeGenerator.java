@@ -117,6 +117,11 @@ public class CodeGenerator {
         String pageableFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Pageable.java";
         FileUtils.write(new File(pageableFile), pageable, "UTF-8");
 
+        // QueryCondition.java
+        String queryCondition = engine.render("backend/common/QueryCondition.java.ftl", param);
+        String queryConditionFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "QueryCondition.java";
+        FileUtils.write(new File(queryConditionFile), queryCondition, "UTF-8");
+
         // PagePlugin.java
         String pagePlugin = engine.render("backend/common/PagePlugin.java.ftl", param);
         String pagePluginFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "PagePlugin.java";
@@ -168,8 +173,8 @@ public class CodeGenerator {
         FileUtils.write(new File(applicationProdPropFile), applicationProdProp, "UTF-8");
 
         // assembly.xml
-        String assembly = engine.render("backend/release.xml.ftl", param);
-        String assemblyFile = projectPath + "/release.xml";
+        String assembly = engine.render("backend/assembly.xml.ftl", param);
+        String assemblyFile = projectPath + "/assembly.xml";
         FileUtils.write(new File(assemblyFile), assembly, "UTF-8");
 
         // pom.xml

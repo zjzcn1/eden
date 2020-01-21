@@ -16,7 +16,4 @@ public class TableColumn {
     private Boolean isUpdateTimeColumn;
     private Boolean isDeletedColumn;
     private Boolean isEnabledColumn;
-
-    // ui
-    private Integer columnWidth;
 }

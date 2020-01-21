@@ -77,17 +77,6 @@ public class ParamBuilder {
                 param.put("deletedColumn", column.getColumnName());
             }
         }
-
-        // column width
-        for (TableColumn column : columns) {
-            if (column.getIsPrimaryKey()) {
-                column.setColumnWidth(80);
-            } else if ("Date".equals(column.getTypeName())) {
-                column.setColumnWidth(140);
-            } else if (column.getIsEnabledColumn()) {
-                column.setColumnWidth(80);
-            }
-        }
         return param;
     }
 
