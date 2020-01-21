@@ -3,8 +3,8 @@
         <!--工具条-->
         <el-row style="margin-bottom: 10px">
             <el-col :span="6">
-                <el-input placeholder="请输入内容" v-model="query.value" class="input-with-select">
-                    <el-select v-model="query.name" slot="prepend" placeholder="请选择">
+                <el-input placeholder="请输入内容" v-model="query.value" clearable class="input-with-select">
+                    <el-select v-model="query.column" slot="prepend" placeholder="请选择">
                         <#list columns as column>
                         <#if ((column.typeName=="Integer" || column.typeName=="Long" || column.typeName=="String")
                         && !column.isEnabledColumn && !column.isDeletedColumn) >
@@ -25,39 +25,45 @@
         <!--列表-->
         <el-table :data="dataList" highlight-current-row v-loading="listLoading" style="width: 100%;">
             <#list columns as column>
-                <#if column.isEnabledColumn>
-                    <el-table-column prop="${column.propertyName}" label="${column.comment}" width="${column.columnWidth}">
-                        <template slot-scope="scope">
-                            <el-tag :type="scope.row.${column.propertyName} === true ? 'success':'danger'">
-                                {{scope.row.${column.propertyName} === true ? '有效':'无效'}}
-                            </el-tag>
-                        </template>
-                    </el-table-column>
-                <#elseif !column.isDeletedColumn>
-                    <el-table-column prop="${column.propertyName}" label="${column.comment}" <#if column.columnWidth??>width="${column.columnWidth}"<#else>min-width="100"</#if>>
-                    </el-table-column>
-                </#if>
+            <#if column.isEnabledColumn>
+            <el-table-column prop="${column.propertyName}" label="${column.comment}" min-width="80">
+                <template slot-scope="scope">
+                    <el-tag :type="scope.row.${column.propertyName} === true ? 'success':'danger'">
+                        {{scope.row.${column.propertyName} === true ? '有效':'无效'}}
+                    </el-tag>
+                </template>
+            </el-table-column>
+            <#elseif column.isCreateDatecolumn || column.isUpdateDatecolumn>
+            <el-table-column prop="${column.propertyName}" label="${column.comment}" min-width="140">
+            </el-table-column>
+            <#elseif !column.isDeletedColumn>
+            <el-table-column prop="${column.propertyName}" label="${column.comment}" min-width="100">
+            </el-table-column>
+            </#if>
             </#list>
 
-            <el-table-column label="操作" width="180">
+            <el-table-column label="操作" width="100">
                 <template slot-scope="scope">
-                    <el-button type="warning" size="small" icon="el-icon-edit"
-                               @click="handleEdit(scope.$index, scope.row)">修改</el-button>
-                    <el-button type="danger" size="small" icon="el-icon-delete"
-                               @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    <el-tooltip content="修改" placement="top" style="cursor: pointer">
+                        <i class="iconfont icon-edit--fill" @click="handleEdit(scope.$index, scope.row)"
+                           style="margin-right: 20px"></i>
+                    </el-tooltip>
+                    <el-tooltip content="删除" placement="top" style="cursor: pointer">
+                        <i class="iconfont icon-delete" @click="handleDelete(scope.$index, scope.row)"
+                           style="margin-right: 20px"></i>
+                    </el-tooltip>
                 </template>
             </el-table-column>
         </el-table>
 
         <!--分页-->
-        <el-col :span="24" style="padding: 10px 0">
-            <el-pagination layout="total, sizes, prev, pager, next"
-                           @current-change="handleCurrentChange"
-                           :page-size="20"
-                           :total="total"
-                           style="float:right; margin-right:-5px">
-            </el-pagination>
-        </el-col>
+        <el-pagination layout="total, sizes, prev, pager, next"
+                       @current-change="handleCurrentChange"
+                       @size-change="handleSizeChange"
+                       :page-size="20"
+                       :total="total"
+                       style="float:right; padding: 10px 0">
+        </el-pagination>
 
         <!--新增界面-->
         <el-dialog title="新增" class="dialog" :visible.sync="addFormVisible" :close-on-click-modal="false">
@@ -76,8 +82,8 @@
             </div>
         </el-dialog>
 
-        <!--编辑界面-->
-        <el-dialog title="编辑" class="dialog" :visible.sync="editFormVisible" :close-on-click-modal="false">
+        <!--修改界面-->
+        <el-dialog title="修改" class="dialog" :visible.sync="editFormVisible" :close-on-click-modal="false">
             <el-form :model="editForm" label-width="120px" :rules="editFormRules" ref="editForm">
                 <#list columns as column>
                     <#if column.isEnabledColumn>
@@ -107,24 +113,38 @@
     data() {
       return {
         query: {
-          name: '',
+          column: '',
           value: ''
         },
+        listLoading: false,
         dataList: [],
         total: 0,
         page: 1,
-        listLoading: false,
+        size: 20,
 
         addFormVisible: false,
-        addFormRules: {
-
-        },
         addForm: {},
+        addFormRules: {
+        <#list columns as column>
+          <#if (!column.isCreateTimeColumn && !column.isUpdateTimeColumn && !column.isPrimaryKey && !column.isDeletedColumn)>
+          ${column.propertyName}: [
+            { required: true, message: '请输入${column.comment}', trigger: 'blur' },
+          ],
+          </#if>
+        </#list>
+        },
 
         editFormVisible: false,
+        editForm: {},
         editFormRules: {
-        },
-        editForm: {}
+        <#list columns as column>
+          <#if (!column.isCreateTimeColumn && !column.isUpdateTimeColumn && !column.isPrimaryKey && !column.isDeletedColumn)>
+          ${column.propertyName}: [
+            { required: true, message: '请输入${column.comment}', trigger: 'blur' },
+          ],
+          </#if>
+        </#list>
+        }
       }
     },
     mounted() {
@@ -135,13 +155,20 @@
         this.page = val;
         this.queryList();
       },
+      handleSizeChange(val) {
+          this.size = val;
+          this.queryList();
+      },
       queryList() {
+        this.params = [];
+        if (this.query.column && this.query.value) {
+           this.params.push({column: this.query.column, op: '=', value: this.query.value});
+        }
         let params = {
-          size: 20,
-          current: this.page,
-          params: {queryName: this.query.name, queryValue: this.query.value}
+            size: this.size,
+            page: this.page,
+            params: this.params
         };
-
         this.listLoading = true;
         Webapi.list${table.className}(params).then(
           res => {
