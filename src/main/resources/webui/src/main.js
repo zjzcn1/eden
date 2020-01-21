@@ -3,11 +3,12 @@ import App from './App'
 
 import Element from 'element-ui'
 import { Notification } from 'element-ui';
+import 'font-awesome/css/font-awesome.min.css'
 import './styles/style-variables.scss'
+import './styles/iconfont.css'
 import VueRouter from 'vue-router'
 import routes from './routes'
 import config from './config'
-import 'font-awesome/css/font-awesome.min.css'
 import axios from 'axios';
 
 

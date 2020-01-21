@@ -57,14 +57,14 @@ public class PagePlugin implements Interceptor {
         int size = pageable.getSize();
         long total = queryTotal(sql, ms, boundSql);
 
-        String pageSql = getPageSql(sql, (pageable.getCurrent()-1) * size, size);
+        String pageSql = getPageSql(sql, (pageable.getPage()-1) * size, size);
 
         queryArgs[ROWBOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
         queryArgs[MAPPED_STATEMENT_INDEX] = copyFromNewSql(ms, boundSql, pageSql);
 
         Object ret = invocation.proceed();
 
-        Page<?> page = Page.of(pageable.getCurrent(), pageable.getSize(), total, (List<?>)ret);
+        Page<?> page = Page.of(pageable.getPage(), pageable.getSize(), total, (List<?>)ret);
 
         List<Page<?>> result = new ArrayList<>(1);
         result.add(page);

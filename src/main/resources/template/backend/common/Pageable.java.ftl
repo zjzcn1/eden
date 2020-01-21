@@ -1,7 +1,7 @@
 package ${packageName}.common;
 
 import lombok.Data;
-import java.util.Map;
+import java.util.List;
 
 @Data
 public class Pageable {
@@ -9,8 +9,8 @@ public class Pageable {
     public static final Integer DEFAULT_PAGE_SIZE = 20;
 
     private int size = DEFAULT_PAGE_SIZE;
-    private int current = 0;
+    private int page = 0;
 
-    private Map<String, Object> params;
+    private List<QueryCondition> params;
 
 }

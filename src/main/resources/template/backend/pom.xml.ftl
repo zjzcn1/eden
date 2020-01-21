@@ -96,7 +96,7 @@
                 <version>3.1.1</version>
                 <configuration>
                     <descriptors>
-                        <descriptor>./release.xml</descriptor>
+                        <descriptor>./assembly.xml</descriptor>
                     </descriptors>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>

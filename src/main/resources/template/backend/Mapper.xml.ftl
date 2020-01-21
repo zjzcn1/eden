@@ -34,9 +34,11 @@
             <#if deletedColumn??>
             ${deletedColumn} = 0
             </#if>
-            <if test="params.queryName != '' and params.queryValue != ''">
-                and ${r"${"}params.queryName${r"}"} = ${r"#{"}params.queryValue${r"}"}
-            </if>
+            <foreach item="item" collection="params">
+                <if test="item.column != '' and item.op != '' and item.value != ''">
+                    and ${r"${"}item.column${r"}"} ${r"${"}item.op${r"}"} ${r"#{"}item.value${r"}"}
+                </if>
+            </foreach>
         </where>
     </select>
 
