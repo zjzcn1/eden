@@ -33,7 +33,7 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <#elseif column.isCreateDatecolumn || column.isUpdateDatecolumn>
+            <#elseif column.isCreateTimeColumn || column.isUpdateTimeColumn>
             <el-table-column prop="${column.propertyName}" label="${column.comment}" min-width="140">
             </el-table-column>
             <#elseif !column.isDeletedColumn>

@@ -11,7 +11,7 @@
         <include refid="Base_Column_List" />
         from ${table.tableName}
         <where>
-            ${table.tableName}.${primaryKeyColumn} = ${primaryKeyProperty}
+            ${primaryKeyColumn} = ${primaryKeyProperty}
         </where>
     </select>
 
