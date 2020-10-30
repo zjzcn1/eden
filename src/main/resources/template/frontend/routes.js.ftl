@@ -1,45 +1,71 @@
-import NotFound from './views/404.vue'
-import NotPerm from './views/403.vue'
-import Main from './views/Main.vue'
-<#list tables as table>
-import ${table.className} from './views/${table.className}/${table.className}.vue'
-</#list>
-
 let routes = [
   {
-    path: '/',
-    component: Main,
-    name: '',
-    hidden: true,
-    children: [
-      { path: '/404', component: NotFound, name: '404' }
-    ]
+    path: '',
+    redirect: '/home',
+    meta: {hidden: true}
   },
   {
     path: '/',
-    component: Main,
-    name: '',
-    hidden: true,
+    component: () => import("@/views/Main"),
+    meta: {leaf: true},
     children: [
-      { path: '/403', component: NotPerm, name: '403' }
+      {
+        path: '/home',
+        name: '首页',
+        meta: {icon: 'iconfont icon-home', breadcrumb: [{name: '首页', path: '/home'}]},
+        component: () => import("@/views/Home"),
+      },
     ]
   },
 <#list tables as table>
   {
     path: '/',
-    component: Main,
+    component: () => import("@/views/Main"),
     name: '',
-    icon: 'fa fa-circle-o',
-    leaf: true,//只有一个节点
+    meta: {leaf: true, icon: 'iconfont icon-home'},
     children: [
-      { path: '/${table.objectName}/list${table.className}', component: ${table.className}, name: '${table.tableComment}管理' }
+      {
+        path: '/${table.objectName}/list',
+        name: '${table.tableComment}管理',
+        meta: {icon: 'iconfont icon-home'},
+        component: () => import("@/views/${table.className}")
+      }
     ]
   },
 </#list>
+
+  {
+    path: '/',
+    component: () => import("@/views/Main"),
+    name: '',
+    meta: {hidden: true},
+    children: [
+      {
+        path: '/404',
+        name: '页面未找到',
+        meta: {},
+        component: () => import("@/views/404")
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: () => import("@/views/Main"),
+    name: '',
+    meta: {hidden: true},
+    children: [
+      {
+        path: '/403',
+        name: '没有权限',
+        meta: {},
+        component: () => import("@/views/403")
+      }
+    ]
+  },
   {
     path: '*',
-    hidden: true,
-    redirect: { path: '/404' }
+    redirect: {path: '/404'},
+    meta: {hidden: true},
   }
 ];
 

@@ -29,12 +29,10 @@ public class CodeGenerator {
 
     public void generateCode() throws IOException {
         log.info("Generate code started...");
-        String projectPath = EdenUtils.getRootPath() + "project/" + config.getProjectName() + "-" + DateFormatUtils.format(new Date(), "yyyyMMdd-HHmmss");
+        String projectPath = Utils.getRootPath() + "project/" + config.getProjectName() + "-" + DateFormatUtils.format(new Date(), "yyyyMMdd-HHmmss");
         String javaPath = projectPath + "/src/main/java/";
         String resourcePath = projectPath + "/src/main/resources/";
         String packageName = config.getPackageName();
-
-        EdenUtils.copyResources("webui/", projectPath);
 
         List<TableInfo> tableInfos = new ArrayList<>();
         List<String> tables = connection.getTables();
@@ -46,13 +44,13 @@ public class CodeGenerator {
             TableInfo table = new TableInfo();
             table.setTableName(tableName);
             table.setTableComment(connection.getCommentByTableName(tableName));
-            table.setClassName(EdenUtils.toBigCamelCase(tableName));
-            table.setObjectName(EdenUtils.toCamelCase(tableName));
+            table.setClassName(Utils.toBigCamelCase(tableName));
+            table.setObjectName(Utils.toCamelCase(tableName));
             tableInfos.add(table);
 
             List<TableColumn> columns = connection.getColumns(tableName);
             for (TableColumn column : columns) {
-                String propertyName = EdenUtils.toCamelCase(column.getColumnName());
+                String propertyName = Utils.toCamelCase(column.getColumnName());
                 column.setPropertyName(propertyName);
                 column.setIsCreateTimeColumn(column.getColumnName().equals(config.getCreateTimeColumn()));
                 column.setIsUpdateTimeColumn(column.getColumnName().equals(config.getUpdateTimeColumn()));
@@ -72,6 +70,11 @@ public class CodeGenerator {
             String service = engine.render("backend/Service.java.ftl", param);
             String serviceFile = javaPath + ParamBuilder.buildServiceFileName(packageName, table.getClassName());
             FileUtils.write(new File(serviceFile), service, "UTF-8");
+
+            // ServiceImpl
+            String serviceImpl = engine.render("backend/ServiceImpl.java.ftl", param);
+            String serviceImplFile = javaPath + ParamBuilder.buildServiceImplFileName(packageName, table.getClassName());
+            FileUtils.write(new File(serviceImplFile), serviceImpl, "UTF-8");
 
             // Dao
             String dao = engine.render("backend/Dao.java.ftl", param);
@@ -97,6 +100,22 @@ public class CodeGenerator {
         Map<String, Object> param = new HashMap<>();
         param.put("packageName", packageName);
         param.put("projectName", config.getProjectName());
+
+        // BaseDao.java
+        String baseDaoHandler = engine.render("backend/common/BaseDao.java.ftl", param);
+        String baseDaoHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "BaseDao.java";
+        FileUtils.write(new File(baseDaoHandlerFile), baseDaoHandler, "UTF-8");
+
+        // BaseService.java
+        String baseServiceHandler = engine.render("backend/common/BaseService.java.ftl", param);
+        String baseServiceHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "BaseService.java";
+        FileUtils.write(new File(baseServiceHandlerFile), baseServiceHandler, "UTF-8");
+
+        // BaseServiceImpl.java
+        String baseServiceImplHandler = engine.render("backend/common/BaseServiceImpl.java.ftl", param);
+        String baseServiceImplHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "BaseServiceImpl.java";
+        FileUtils.write(new File(baseServiceImplHandlerFile), baseServiceImplHandler, "UTF-8");
+
         // ErrorCode.java
         String errorCode = engine.render("backend/common/ErrorCode.java.ftl", param);
         String errorCodeFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ErrorCode.java";
@@ -117,11 +136,6 @@ public class CodeGenerator {
         String pageableFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Pageable.java";
         FileUtils.write(new File(pageableFile), pageable, "UTF-8");
 
-        // QueryCondition.java
-        String queryCondition = engine.render("backend/common/QueryCondition.java.ftl", param);
-        String queryConditionFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "QueryCondition.java";
-        FileUtils.write(new File(queryConditionFile), queryCondition, "UTF-8");
-
         // PagePlugin.java
         String pagePlugin = engine.render("backend/common/PagePlugin.java.ftl", param);
         String pagePluginFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "PagePlugin.java";
@@ -136,11 +150,6 @@ public class CodeGenerator {
         String serviceException = engine.render("backend/common/ServiceException.java.ftl", param);
         String serviceExceptionFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ServiceException.java";
         FileUtils.write(new File(serviceExceptionFile), serviceException, "UTF-8");
-
-        // CorsConfig.java
-        String corsConfig = engine.render("backend/config/CorsConfig.java.ftl", param);
-        String corsConfigFile = javaPath + ParamBuilder.buildConfigPath(packageName) + "CorsConfig.java";
-        FileUtils.write(new File(corsConfigFile), corsConfig, "UTF-8");
 
         // SpringConfig.java
         String springConfig = engine.render("backend/config/SpringConfig.java.ftl", param);
@@ -187,16 +196,20 @@ public class CodeGenerator {
         String startShFile = projectPath + "/bin/start.sh";
         FileUtils.write(new File(startShFile), startSh, "UTF-8");
 
+
+        // webui
+        Utils.copyResources("webui/", projectPath);
+
         // webapi
         Map<String, Object> webapiParams = new HashMap<>();
         webapiParams.put("tables", tableInfos);
         String webapi = engine.render("frontend/webapi.js.ftl", webapiParams);
-        String webapiFile = projectPath + "/webui/src/webapi.js";
+        String webapiFile = projectPath + "/webui/src/common/webapi.js";
         FileUtils.write(new File(webapiFile), webapi, "UTF-8");
 
         // ui routes
         String routes = engine.render("frontend/routes.js.ftl", webapiParams);
-        String routesFile = projectPath + "/webui/src/routes.js";
+        String routesFile = projectPath + "/webui/src/common/routes.js";
         FileUtils.write(new File(routesFile), routes, "UTF-8");
 
         // ui Main.vue

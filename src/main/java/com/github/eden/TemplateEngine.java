@@ -14,10 +14,9 @@ public class TemplateEngine {
     private Configuration configuration;
 
     public TemplateEngine() {
-        String path = new File(TemplateEngine.class.getClassLoader().getResource("template").getFile()).getPath();
         configuration = new Configuration(Configuration.VERSION_2_3_28);
-
         try {
+            String path = new File(TemplateEngine.class.getClassLoader().getResource("template").getFile()).getPath();
             if (path.contains("jar")){
                 configuration.setClassForTemplateLoading(TemplateEngine.class, "/template");
             } else {

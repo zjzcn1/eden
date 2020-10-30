@@ -1,6 +1,8 @@
 package ${packageName}.common;
 
 /**
+ * *****************************************************
+ * 外部接口定义：
  * 0为请求成功
  * 1-99为平台错误
  * 100以上为业务错误
@@ -18,31 +20,38 @@ package ${packageName}.common;
  * 8	api版本号不支持
  * 9	请求时间超出最大时限	         检查入参的timestamp
  * 10	接口流控	                     三次重试，每次间隔10S
+ *
+ * *****************************************************
+ * 业务系统接口定义：
+ * 200   为请求成功
+ * 401   没有登录
+ * 403   没有权限
+ * 400   业务异常
+ * 500   系统错误
  */
 
 public enum ErrorCode {
 
-    Success(200, "成功"),
-    Unauthorized(401, "没有登录"),
-    Forbidden(403, "没有权限"),
-    InvalidArgs(400, "业务异常"),
-    SystemError(500, "系统错误");
+    SUCCESS(200, "成功"),
+    UNAUTHORIZED(401, "没有登录"),
+    FORBIDDEN(403, "没有权限"),
+    BUSINESS_ERROR(400, "业务异常"),
+    SYSTEM_ERROR(500, "系统错误");
 
     private int code;
-    private String msg;
+    private String message;
 
-    ErrorCode(int code, String msg) {
+    ErrorCode(int code, String message) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
     }
 
     public int code() {
         return code;
     }
 
-    public String msg() {
-        return msg;
+    public String message() {
+        return message;
     }
-
 
 }

@@ -10,22 +10,27 @@ import java.util.Map;
 public class ParamBuilder {
 
     public static String buildControllerFileName(String packageName, String className) {
-        String path = EdenUtils.packageToPath(packageName + ".controller");
+        String path = Utils.packageToPath(packageName + ".controller");
         return path + className + "Controller.java";
     }
 
     public static String buildServiceFileName(String packageName, String className) {
-        String path = EdenUtils.packageToPath(packageName + ".service");
+        String path = Utils.packageToPath(packageName + ".service");
         return path + className + "Service.java";
     }
 
+    public static String buildServiceImplFileName(String packageName, String className) {
+        String path = Utils.packageToPath(packageName + ".service.impl");
+        return path + className + "ServiceImpl.java";
+    }
+
     public static String buildEntityFileName(String packageName, String className) {
-        String path = EdenUtils.packageToPath(packageName + ".entity");
+        String path = Utils.packageToPath(packageName + ".entity");
         return path + className + ".java";
     }
 
     public static String buildDaoFileName(String packageName, String className) {
-        String path = EdenUtils.packageToPath(packageName + ".dao");
+        String path = Utils.packageToPath(packageName + ".dao");
         return path + className + "Dao.java";
     }
 
@@ -35,19 +40,19 @@ public class ParamBuilder {
     }
 
     public static String buildViewFileName(String className) {
-        return "src/views/" + className + "/" + className + ".vue";
+        return "src/views/" + className + ".vue";
     }
 
     public static String buildCommonPath(String packageName) {
-        return EdenUtils.packageToPath(packageName + ".common");
+        return Utils.packageToPath(packageName + ".common");
     }
 
     public static String buildConfigPath(String packageName) {
-        return EdenUtils.packageToPath(packageName + ".config");
+        return Utils.packageToPath(packageName + ".config");
     }
 
     public static String buildBasePackagePath(String packageName) {
-        return EdenUtils.packageToPath(packageName);
+        return Utils.packageToPath(packageName);
     }
 
     public static Map<String, Object> buildParam(String packageName, TableInfo table, List<TableColumn> columns, Config config) {
@@ -93,8 +98,10 @@ public class ParamBuilder {
         StringBuilder sb = new StringBuilder();
         for (TableColumn column : columns) {
             if (column.getIsEnabledColumn()) {
+                sb.append("    // ").append(column.getComment()).append("\n");
                 sb.append("    private ").append("Boolean ").append(column.getPropertyName()).append(";\n");
             } else if (!column.getIsDeletedColumn()) {
+                sb.append("    // ").append(column.getComment()).append(";\n");
                 sb.append("    private ").append(column.getTypeName()).append(" ").append(column.getPropertyName()).append(";\n");
             }
         }
@@ -150,10 +157,11 @@ public class ParamBuilder {
                     && !column.getIsCreateTimeColumn()
                     && !column.getIsUpdateTimeColumn()
                     && !column.getIsDeletedColumn()) {
-                sb.append(column.getColumnName()).append(" = #{").append(column.getPropertyName()).append("}, ");
+                sb.append(column.getColumnName()).append(" = #{").append(column.getPropertyName()).append("},")
+                        .append("\n            ");
             }
         }
-        return sb.toString().substring(0, sb.toString().length() - 2);
+        return sb.toString().substring(0, sb.toString().lastIndexOf(","));
     }
 
 }

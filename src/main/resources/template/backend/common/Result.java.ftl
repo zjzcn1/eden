@@ -2,25 +2,26 @@ package ${packageName}.common;
 
 import lombok.Data;
 
+
 @Data
 public class Result<T> {
 
     private int code;
-    private String msg;
+    private String message;
     private T data;
 
-    private Result(int code, String msg, T data) {
+    private Result(int code, String message, T data) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
         this.data = data;
     }
 
    public static <T> Result<T> success(T data) {
-        return new Result<>(ErrorCode.Success.code(), ErrorCode.Success.msg(), data);
+        return new Result<>(ErrorCode.SUCCESS.code(), ErrorCode.SUCCESS.message(), data);
     }
 
     public static <T> Result<T> success() {
-        return new Result<>(ErrorCode.Success.code(), ErrorCode.Success.msg(), null);
+        return new Result<>(ErrorCode.SUCCESS.code(), ErrorCode.SUCCESS.message(), null);
     }
 
     public static <T> Result<T> error(int code, String msg) {
@@ -28,6 +29,6 @@ public class Result<T> {
     }
 
     public static <T> Result<T> error(ErrorCode error) {
-        return new Result<>(error.code(), error.msg(), null);
+        return new Result<>(error.code(), error.message(), null);
     }
 }

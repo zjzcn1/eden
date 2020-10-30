@@ -12,5 +12,4 @@ import java.math.BigDecimal;
 public class ${table.className}{
 
 ${entityProperties}
-
 }

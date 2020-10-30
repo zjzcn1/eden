@@ -1,61 +1,59 @@
 <template>
     <el-container class="container">
-        <header class="header">
-            <el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
+        <header class="header-container">
+            <el-col :span="10" class="logo">
                 <img class="icon" src="../assets/logo.png"/>
-                {{collapsed?sysShortName:sysName}}
+                <span class="text">${systemName}</span>
             </el-col>
-            <el-col :span="10">
-                <div class="tool" @click.prevent="collapse">
-                    <i class="fa fa-align-justify"></i>
-                </div>
+            <el-col :span="10" class="tool">
+
             </el-col>
             <el-col :span="4" class="user">
-                <el-dropdown trigger="click">
-                    <span class="el-dropdown-link">{{sysUserName}}<i class="el-icon-caret-bottom"></i></span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
+                <span>
+                    <i class="el-icon-user-solid"></i>
+                    {{userName}}
+                </span>
             </el-col>
         </header>
-        <div :span="24" class="content-container">
-            <aside class="sidebar" :class="collapsed?'sidebar-collapse-width':'sidebar-width'">
-                <!--导航菜单-->
-                <el-menu :default-active="$route.path" class="el-menu-vertical-demo" :unique-opened="true" router
-                         :collapse="collapsed">
-                    <template v-for="(item,index) in $router.options.routes">
-                        <el-submenu :index="index+''" v-if="!item.leaf && !item.hidden" :key="index">
+        <div :span="24" class="body-container">
+            <aside class="sidebar-container">
+                <el-menu :default-active="$route.path" unique-opened router>
+                    <template v-for="(item, index) in $router.options.routes">
+                        <el-submenu :index="item.path + index" v-if="!item.meta.hidden&&!item.meta.leaf" :key="index">
                             <template slot="title">
-                                <i :class="item.icon"></i>
+                                <i class="icon" :class="item.meta.icon"></i>
                                 <span slot="title">{{item.name}}</span>
                             </template>
                             <template v-for="child in item.children">
-                                <el-menu-item :index="child.path" :key="child.path" v-if="!child.hidden">
+                                <el-menu-item :index="child.path" :key="child.path"
+                                              v-if="!child.meta.hidden">
                                     <template slot="title">
-                                        <i :class="child.icon"></i>
+                                        <i class="icon" :class="child.meta.icon"></i>
                                         <span slot="title">{{child.name}}</span>
                                     </template>
                                 </el-menu-item>
                             </template>
                         </el-submenu>
-                        <el-menu-item v-if="item.leaf && item.children.length>0 && !item.hidden"
+                        <el-menu-item v-if="!item.meta.hidden&&item.meta.leaf&&item.children.length>0"
                                       :index="item.children[0].path" :key="index">
-                            <i :class="item.icon"></i>
+                            <i class="icon" :class="item.children[0].meta.icon"></i>
                             <span slot="title">{{item.children[0].name}}</span>
                         </el-menu-item>
                     </template>
                 </el-menu>
             </aside>
-            <div :span="24" class="main-container">
+            <div :span="24" class="content-container">
                 <el-breadcrumb separator="/">
-                    <el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
-                        {{ item.name }}
-                    </el-breadcrumb-item>
+                    <i :class="$route.meta.icon"></i>
+                    <template v-for="(item, index) in $route.meta.breadcrumb ? $route.meta.breadcrumb : $route.matched">
+                        <el-breadcrumb-item :key="index">
+                            {{ item.name }}
+                        </el-breadcrumb-item>
+                    </template>
                 </el-breadcrumb>
                 <el-main>
                     <transition name="fade" mode="out-in">
-                        <router-view></router-view>
+                        <router-view v-if="isRouterAlive" :msg="currentApp"></router-view>
                     </transition>
                 </el-main>
             </div>
@@ -65,154 +63,169 @@
 
 <script>
 
+  // import Webapi from '../common/webapi'
+
   export default {
     data() {
       return {
-        sysName: '${systemName}',
-        sysShortName: '',
-        collapsed: false,
-        sysUserName: ''
-      }
-    },
-    methods: {
-      //退出登录
-      logout() {
-        this.$confirm('确认退出吗?', '提示', {
-          type: 'warning'
-        }).then(() => {
-
-        }).catch(() => {
-
-        });
-      },
-      //折叠导航栏
-      collapse() {
-        this.collapsed = !this.collapsed;
+        isRouterAlive: true,
+        userName: ''
       }
     },
     mounted() {
-      // Webapi.getCurrentUser().then((res) => {
-      //   if (res.data && res.data.code === 200) {
-      //     this.sysUserName = res.data.data.userName;
-      //   }
-      // });
+      setTimeout(() => {
+        this.currentApp = 2;
+        this.refresh();
+      }, 3000);
+      // Webapi.getDemo()
+    },
+    methods: {
+      refresh() {
+        this.isRouterAlive = false;
+        this.$nextTick(() => {
+          this.isRouterAlive = true;
+        })
+      }
     }
   }
 
 </script>
 
-<style scoped lang="scss">
-    $header-color: #16222b;
+<style lang="scss">
+    @import '../assets/iconfont/iconfont.css';
+
+    $header-color: #373d41;
     $header-height: 50px;
     $sidebar-width: 220px;
     $sidebar-collapse-width: 64px;
+    $breadcrumb-height: 42px;
+
+    @mixin scrollbar() {
+        overflow-y: auto;
+        overflow-x: hidden;
+        &::-webkit-scrollbar {
+            width: 6px;
+            background-color: #cfd5de;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #8b939e;
+        }
+    }
 
     .container {
         position: absolute;
         top: 0px;
         bottom: 0px;
         width: 100%;
-        .header {
+        height: 100%;
+
+        .header-container {
             background-color: $header-color;
             color: #fff;
             line-height: $header-height;
             height: $header-height;
             width: 100%;
+
             .logo {
+                width: $sidebar-width;
                 height: $header-height;
-                font-size: 20px;
+                font-size: 18px;
                 padding-left: 12px;
                 padding-right: 20px;
                 border-right: 1px solid rgba(238, 241, 146, 0.3);
-                i {
-                    font-size: 28px;
-                    margin: 10px 10px 10px 0px;
-                    float: left;
-                }
+
                 .icon {
-                    height: 28px;
-                    width: 28px;
-                    margin: 10px 10px 10px 0px;
+                    height: 30px;
+                    width: 30px;
+                    margin: 10px;
                     float: left;
                 }
+
+                .text {
+                    font-weight: 500;
+                }
             }
-            .logo-width {
-                width: $sidebar-width;
-            }
-            .logo-collapse-width {
-                width: $sidebar-collapse-width;
-            }
+
             .tool {
-                padding: 0px 23px;
-                width: 14px;
-                cursor: pointer;
+                .app-select {
+                    margin-left: 12px;
+
+                    .el-input__inner {
+                        border-radius: 2px;
+                        width: 200px;
+                    }
+                }
             }
 
             .user {
                 text-align: right;
                 padding-right: 35px;
                 float: right;
+
                 .el-dropdown-link {
                     cursor: pointer;
                     color: #fff;
                 }
             }
         }
-        .content-container {
+
+        .body-container {
             width: 100%;
             display: flex;
             position: absolute;
             top: $header-height;
             bottom: 0px;
-            overflow: hidden;
-            .sidebar {
-                overflow-y: auto;
-                overflow-x: hidden;
+
+            .sidebar-container {
+                @include scrollbar;
+
+                width: $sidebar-width;
                 z-index: 200;
-                &::-webkit-scrollbar {
-                    width: 6px;
-                    background-color: #cfd5de;
-                }
-                &::-webkit-scrollbar-thumb {
-                    background: #8b939e;
-                }
                 .el-menu {
                     height: 100%;
-                }
-            }
-            .sidebar-width {
-                width: $sidebar-width;
-            }
-            .sidebar-collapse-width {
-                overflow-y: visible;
-                overflow-x: visible;
-                width: $sidebar-collapse-width;
-            }
 
-            .main-container {
-                flex: 1;
-                overflow-y: auto;
-                overflow-x: hidden;
-                &::-webkit-scrollbar {
-                    width: 6px;
-                    background-color: #cfd5de;
-                }
-                &::-webkit-scrollbar-thumb {
-                    background: #8b939e;
-                }
-                .el-breadcrumb {
-                    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
-                    padding: 15px;
-                    .title {
-                        width: 200px;
-                        float: left;
-                        color: #475669;
+                    .icon {
+                        margin-right: 8px;
                     }
                 }
+            }
+
+            .content-container {
+                background: #f3f3f3;
+                flex: 1;
+                overflow-x: auto;
+
+                .el-breadcrumb {
+                    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
+                    padding: 0 14px;
+                    height: $breadcrumb-height;
+                    line-height: $breadcrumb-height;
+                    i {
+                        font-size: 14px;
+                        color: #909399;
+                        float: left;
+                        margin-right: 8px;
+                    }
+                }
+
                 .el-main {
-                    margin-top: 0px;
-                    padding: 15px;
+                    @include scrollbar;
+
+                    height: calc(100vh - ${r"#{"}$header-height${r"}"} - ${r"#{"}$breadcrumb-height${r"}"});
+                    margin-top: 1px;
+                    padding: 20px 12px;
                     box-sizing: border-box;
+
+                    .query-bar {
+                        margin-left: 16px;
+                        .el-form-item {
+                            margin-right: 20px;
+                        }
+                        .el-input {
+                            width: 120px;
+                        }
+                    }
                 }
             }
         }

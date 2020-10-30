@@ -6,42 +6,6 @@
         ${baseColumnNames}
     </sql>
 
-    <select id="getById" resultType="${packageName}.entity.${table.className}">
-        select
-        <include refid="Base_Column_List" />
-        from ${table.tableName}
-        <where>
-            ${primaryKeyColumn} = ${primaryKeyProperty}
-        </where>
-    </select>
-
-    <select id="findAll" resultType="${packageName}.entity.${table.className}">
-        select
-        <include refid="Base_Column_List"/>
-        from ${table.tableName}
-        <where>
-            <#if deletedColumn??>
-            ${deletedColumn} = 0
-            </#if>
-        </where>
-    </select>
-
-    <select id="findByPageable" resultType="${packageName}.entity.${table.className}">
-        select
-        <include refid="Base_Column_List"/>
-        from ${table.tableName}
-        <where>
-            <#if deletedColumn??>
-            ${deletedColumn} = 0
-            </#if>
-            <foreach item="item" collection="params">
-                <if test="item.column != '' and item.op != '' and item.value != ''">
-                    and ${r"${"}item.column${r"}"} ${r"${"}item.op${r"}"} ${r"#{"}item.value${r"}"}
-                </if>
-            </foreach>
-        </where>
-    </select>
-
     <insert id="insert" parameterType="${packageName}.entity.${table.className}" useGeneratedKeys="true" keyProperty="id">
         insert into ${table.tableName}(
             ${insertColumnNames}
@@ -52,9 +16,10 @@
     </insert>
 
     <update id="update" parameterType="${packageName}.entity.${table.className}">
-        update ${table.tableName} set
-        ${updateColumnValues}
-        WHERE ${primaryKeyColumn} = ${primaryKeyProperty}
+        update ${table.tableName}
+        set
+            ${updateColumnValues}
+        where ${primaryKeyColumn} = ${primaryKeyProperty}
     </update>
 
 <#if deletedColumn??>
@@ -68,4 +33,65 @@
         where ${primaryKeyColumn} = ${primaryKeyProperty}
     </delete>
 </#if>
+
+    <select id="getById" resultType="${packageName}.entity.${table.className}">
+        select
+        <include refid="Base_Column_List" />
+        from ${table.tableName}
+        <where>
+            ${primaryKeyColumn} = ${r"#{"}id${r"}"}
+        </where>
+    </select>
+
+    <select id="getListByIds" resultType="${packageName}.entity.${table.className}">
+        select
+        <include refid="Base_Column_List" />
+        from ${table.tableName}
+        <where>
+            ${primaryKeyColumn} in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                ${r"#{"}id${r"}"}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        select
+            count(*)
+        from ${table.tableName}
+        <where>
+            <!-- condition -->
+
+            <#if deletedColumn??>
+            ${deletedColumn} = 0
+            </#if>
+        </where>
+    </select>
+
+    <select id="list" resultType="${packageName}.entity.${table.className}">
+        select
+        <include refid="Base_Column_List"/>
+        from ${table.tableName}
+        <where>
+            <!-- condition -->
+
+            <#if deletedColumn??>
+            ${deletedColumn} = 0
+            </#if>
+        </where>
+    </select>
+
+    <select id="page" resultType="${packageName}.entity.${table.className}">
+        select
+        <include refid="Base_Column_List"/>
+        from ${table.tableName}
+        <where>
+            <!-- condition -->
+
+            <#if deletedColumn??>
+            ${deletedColumn} = 0
+            </#if>
+        </where>
+    </select>
+
 </mapper>

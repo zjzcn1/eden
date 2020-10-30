@@ -111,47 +111,40 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.8.0</version>
-                <configuration>
-                    <workingDirectory>${r"${"}project.basedir${r"}"}/webui</workingDirectory>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
                 <executions>
-                    <!-- Install our node and npm version to run npm/node scripts-->
                     <execution>
-                        <id>install node and npm</id>
+                        <id>exec-npm-install</id>
                         <phase>generate-resources</phase>
                         <goals>
-                            <goal>install-node-and-npm</goal>
+                            <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v8.11.3</nodeVersion>
-                            <npmVersion>6.9.0</npmVersion>
-                        </configuration>
-                    </execution>
-                    <!-- Install all project dependencies -->
-                    <execution>
-                        <id>npm install</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                            <workingDirectory>${r"${"}basedir${r"}"}/webui</workingDirectory>
                         </configuration>
                     </execution>
 
                     <execution>
-                        <id>npm run build</id>
+                        <id>exec-npm-run-build</id>
                         <phase>generate-resources</phase>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build</arguments>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>build</argument>
+                            </arguments>
+                            <workingDirectory>${r"${"}basedir${r"}"}/webui</workingDirectory>
                         </configuration>
                     </execution>
+
                 </executions>
             </plugin>
             <plugin>
@@ -164,11 +157,11 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${r"${"}project.basedir${r"}"}/target/classes/public</outputDirectory>
+                            <outputDirectory>${r"${"}basedir${r"}"}/target/classes/public</outputDirectory>
                             <overwrite>true</overwrite>
                             <resources>
                                 <resource>
-                                    <directory>${r"${"}project.basedir${r"}"}/webui/dist/</directory>
+                                    <directory>${r"${"}basedir${r"}"}/webui/dist</directory>
                                 </resource>
                             </resources>
                         </configuration>

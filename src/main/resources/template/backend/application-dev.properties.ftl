@@ -27,5 +27,5 @@ spring.datasource.idle-time-out=60000
 spring.datasource.connection-init-sql= set names utf8mb4
 
 mybatis.configuration.map-underscore-to-camel-case=true
-mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
 mybatis.mapper-locations=classpath*:mapper/*Mapper.xml
+mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl

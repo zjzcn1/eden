@@ -8,16 +8,14 @@ public class Eden {
     private static final String LOGBACK_XML_FILE = "conf/logback.xml";
 
     public static void main(String[] args) throws IOException {
-        String rootPath = EdenUtils.getRootPath();
+        String rootPath = Utils.getRootPath();
 
-        EdenUtils.setLogbackFile(rootPath + LOGBACK_XML_FILE);
+        Utils.setLogbackFile(rootPath + LOGBACK_XML_FILE);
 
-        Config config = EdenUtils.loadYaml(rootPath + CONFIG_FILE, Config.class);
+        Config config = Utils.loadYaml(rootPath + CONFIG_FILE, Config.class);
         CodeGenerator generator = new CodeGenerator(config);
 
         generator.generateCode();
-
-        System.out.println(config.getUnusedTables());
     }
 
 }

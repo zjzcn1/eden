@@ -8,13 +8,16 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.MappedStatement.Builder;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,7 +29,6 @@ import java.util.Map;
 import java.util.Properties;
 
 
-@Component
 @Intercepts({
         @Signature(type = Executor.class, method = "query", args = {
                 MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class
@@ -38,7 +40,7 @@ public class PagePlugin implements Interceptor {
 
     private static final int MAPPED_STATEMENT_INDEX = 0;
     private static final int PARAMETER_INDEX = 1;
-    private static final int ROWBOUNDS_INDEX = 2;
+    private static final int ROW_BOUNDS_INDEX = 2;
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -46,25 +48,25 @@ public class PagePlugin implements Interceptor {
         final Object parameter = queryArgs[PARAMETER_INDEX];
 
         Pageable pageable = findObjectFromParams(parameter, Pageable.class);
-        if(pageable == null) {
+        if (pageable == null) {
             return invocation.proceed();
         }
 
-        final MappedStatement ms = (MappedStatement)queryArgs[MAPPED_STATEMENT_INDEX];
+        final MappedStatement ms = (MappedStatement) queryArgs[MAPPED_STATEMENT_INDEX];
         final BoundSql boundSql = ms.getBoundSql(parameter);
         String sql = removeSqlSemicolon(boundSql.getSql().trim());
 
         int size = pageable.getSize();
         long total = queryTotal(sql, ms, boundSql);
 
-        String pageSql = getPageSql(sql, (pageable.getPage()-1) * size, size);
+        String pageSql = getPageSql(sql, (pageable.getPage() - 1) * size, size);
 
-        queryArgs[ROWBOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
+        queryArgs[ROW_BOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
         queryArgs[MAPPED_STATEMENT_INDEX] = copyFromNewSql(ms, boundSql, pageSql);
 
         Object ret = invocation.proceed();
 
-        Page<?> page = Page.of(pageable.getPage(), pageable.getSize(), total, (List<?>)ret);
+        Page<?> page = Page.of(pageable.getPage(), pageable.getSize(), total, (List<?>) ret);
 
         List<Page<?>> result = new ArrayList<>(1);
         result.add(page);
@@ -85,7 +87,7 @@ public class PagePlugin implements Interceptor {
     private String getPageSql(String sql, int offset, int limit) {
         StringBuilder sqlBuilder = new StringBuilder(sql);
 
-        if(offset <= 0){
+        if (offset <= 0) {
             return sqlBuilder.append(" limit ").append(limit).toString();
         }
 
@@ -106,7 +108,7 @@ public class PagePlugin implements Interceptor {
             return null;
         }
 
-        if(objClass.isAssignableFrom(params.getClass())) {
+        if (objClass.isAssignableFrom(params.getClass())) {
             return (T) params;
         }
 
@@ -115,7 +117,7 @@ public class PagePlugin implements Interceptor {
             for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
                 Object paramValue = entry.getValue();
 
-                if(paramValue != null && objClass.isAssignableFrom(paramValue.getClass())) {
+                if (paramValue != null && objClass.isAssignableFrom(paramValue.getClass())) {
                     return (T) paramValue;
                 }
             }
@@ -149,14 +151,14 @@ public class PagePlugin implements Interceptor {
 
             return totalCount;
         } catch (SQLException e) {
-            log.error("查询总记录数出错", e);
+            log.error("Query total error", e);
             throw e;
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException e) {
-                    log.error("exception happens when doing: ResultSet.close()", e);
+                    log.error("Exception happens when doing: ResultSet.close()", e);
                 }
             }
 
@@ -164,7 +166,7 @@ public class PagePlugin implements Interceptor {
                 try {
                     countStmt.close();
                 } catch (SQLException e) {
-                    log.error("exception happens when doing: PreparedStatement.close()", e);
+                    log.error("Exception happens when doing: PreparedStatement.close()", e);
                 }
             }
 
@@ -172,15 +174,14 @@ public class PagePlugin implements Interceptor {
                 try {
                     connection.close();
                 } catch (SQLException e) {
-                    log.error("exception happens when doing: Connection.close()", e);
+                    log.error("Exception happens when doing: Connection.close()", e);
                 }
             }
         }
 
     }
 
-    private MappedStatement copyFromNewSql(MappedStatement ms,
-                                                 BoundSql boundSql, String sql) {
+    private MappedStatement copyFromNewSql(MappedStatement ms, BoundSql boundSql, String sql) {
         BoundSql newBoundSql = copyFromBoundSql(ms, boundSql, sql);
 
         return copyFromMappedStatement(ms, new SqlSource() {
@@ -196,8 +197,8 @@ public class PagePlugin implements Interceptor {
      */
     private String removeSqlSemicolon(String sql) {
         final StringBuilder sqlBuilder = new StringBuilder(sql);
-        if(sqlBuilder.lastIndexOf(";") == sqlBuilder.length()-1){
-            sqlBuilder.deleteCharAt(sqlBuilder.length()-1);
+        if (sqlBuilder.lastIndexOf(";") == sqlBuilder.length() - 1) {
+            sqlBuilder.deleteCharAt(sqlBuilder.length() - 1);
         }
 
         return sqlBuilder.toString();
@@ -207,14 +208,14 @@ public class PagePlugin implements Interceptor {
      * 对SQL参数(?)设值
      */
     private void setParameters(PreparedStatement ps, MappedStatement mappedStatement, BoundSql boundSql,
-                                      Object parameterObject) throws SQLException {
+                               Object parameterObject) throws SQLException {
         ParameterHandler parameterHandler = new DefaultParameterHandler(mappedStatement, parameterObject, boundSql);
         parameterHandler.setParameters(ps);
     }
 
-    private static BoundSql copyFromBoundSql(MappedStatement ms, BoundSql boundSql,
-                                             String sql) {
-        BoundSql newBoundSql = new BoundSql(ms.getConfiguration(),sql, boundSql.getParameterMappings(), boundSql.getParameterObject());
+    private static BoundSql copyFromBoundSql(MappedStatement ms, BoundSql boundSql, String sql) {
+        BoundSql newBoundSql = new BoundSql(ms.getConfiguration(), sql,
+                boundSql.getParameterMappings(), boundSql.getParameterObject());
         for (ParameterMapping mapping : boundSql.getParameterMappings()) {
             String prop = mapping.getProperty();
             if (boundSql.hasAdditionalParameter(prop)) {
@@ -226,18 +227,18 @@ public class PagePlugin implements Interceptor {
 
     //see: MapperBuilderAssistant
     private MappedStatement copyFromMappedStatement(MappedStatement ms, SqlSource newSqlSource) {
-        Builder builder = new Builder(ms.getConfiguration(),ms.getId(),newSqlSource,ms.getSqlCommandType());
+        Builder builder = new Builder(ms.getConfiguration(), ms.getId(), newSqlSource, ms.getSqlCommandType());
 
         builder.resource(ms.getResource());
         builder.fetchSize(ms.getFetchSize());
         builder.statementType(ms.getStatementType());
         builder.keyGenerator(ms.getKeyGenerator());
-        if(ms.getKeyProperties() != null && ms.getKeyProperties().length !=0){
+        if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
             StringBuilder keyProperties = new StringBuilder();
-            for(String keyProperty : ms.getKeyProperties()){
+            for (String keyProperty : ms.getKeyProperties()) {
                 keyProperties.append(keyProperty).append(",");
             }
-            keyProperties.delete(keyProperties.length()-1, keyProperties.length());
+            keyProperties.delete(keyProperties.length() - 1, keyProperties.length());
             builder.keyProperty(keyProperties.toString());
         }
 

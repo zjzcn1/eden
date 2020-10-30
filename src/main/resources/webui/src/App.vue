@@ -31,26 +31,6 @@ body {
 	width: 100%;
 }
 
-.el-submenu [class^=fa] {
-	vertical-align: baseline;
-	margin-right: 10px;
-}
-
-.el-menu-item [class^=fa] {
-	vertical-align: baseline;
-	margin-right: 10px;
-}
-
-.toolbar {
-	background: #f2f2f2;
-	padding: 10px;
-	//border:1px solid #dfe6ec;
-	margin: 10px 0px;
-	.el-form-item {
-		margin-bottom: 10px;
-	}
-}
-
 .fade-enter-active,
 .fade-leave-active {
 	transition: all .2s ease;
@@ -60,13 +40,5 @@ body {
 .fade-leave-active {
 	opacity: 0;
 }
-a, a:focus, a:hover {
-	cursor: pointer;
-	color: inherit;
-	text-decoration: none;
-}
 
-.el-dialog .el-dialog__body {
-	padding: 10px 20px 0 20px;
-}
 </style>

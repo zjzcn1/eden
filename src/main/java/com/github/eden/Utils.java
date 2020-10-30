@@ -10,26 +10,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class EdenUtils {
+public class Utils {
 
-    private static final Logger log = LoggerFactory.getLogger(EdenUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
     public static String getRootPath() {
-        URL url = EdenUtils.class.getProtectionDomain().getCodeSource().getLocation();
+        URL url = Utils.class.getProtectionDomain().getCodeSource().getLocation();
         String path;
         try {
             path = URLDecoder.decode(url.getPath(), "UTF-8");
@@ -45,7 +42,7 @@ public class EdenUtils {
     }
 
     public static void copyResources(String resourcePath, String toPath) throws IOException {
-        URL url = EdenUtils.class.getProtectionDomain().getCodeSource().getLocation();
+        URL url = Utils.class.getProtectionDomain().getCodeSource().getLocation();
         String path;
         try {
             path = URLDecoder.decode(url.getPath(), "UTF-8");
@@ -59,7 +56,7 @@ public class EdenUtils {
                 JarEntry jarEntry = entries.nextElement();
                 String innerPath = jarEntry.getName();
                 if(innerPath.startsWith(resourcePath) && !jarEntry.isDirectory()){
-                    InputStream inputStream = EdenUtils.class.getClassLoader().getResourceAsStream(innerPath);
+                    InputStream inputStream = Utils.class.getClassLoader().getResourceAsStream(innerPath);
                     if (inputStream != null) {
                         byte[] bytes = IOUtils.toByteArray(inputStream);
                         File file = new File(toPath + File.separator + innerPath);
@@ -71,7 +68,7 @@ public class EdenUtils {
                 }
             }
         } else {
-            String realPath = EdenUtils.class.getClassLoader().getResource(resourcePath).getPath();
+            String realPath = Utils.class.getClassLoader().getResource(resourcePath).getPath();
             FileUtils.copyDirectory(new File(realPath), new File(toPath + File.separator + resourcePath));
         }
     }
@@ -189,7 +186,7 @@ public class EdenUtils {
             System.out.println(jarEntry.getName());
             String innerPath = jarEntry.getName();
             if(innerPath.startsWith("webui/") && !jarEntry.isDirectory()){
-                InputStream inputStream = EdenUtils.class.getClassLoader().getResourceAsStream(innerPath);
+                InputStream inputStream = Utils.class.getClassLoader().getResourceAsStream(innerPath);
                 if (inputStream != null) {
                     byte[] bytes = IOUtils.toByteArray(inputStream);
                     File file = new File("/Users/zjz/work/java/eden/target/" + innerPath);
