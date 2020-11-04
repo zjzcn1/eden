@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="true" scan="true">
     <property name="log.name" value="eden"/>
-    <property name="log.filePath" value="logs"/>
+    <property name="log.filePath" value="log"/>
     <property name="log_level" value="debug"/>
     <property name="log.maxHistory" value="7"/>
     <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level [%thread] %-20logger{0} : %msg%n"/>

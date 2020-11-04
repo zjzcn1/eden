@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import routes from './common/routes'
 import config from './common/config'
-import Utils from './common/utils'
+import utils from './common/utils'
 
 import axios from 'axios';
 import Element from 'element-ui'
@@ -19,29 +19,29 @@ Vue.use(VeCharts);
 const {Loading, Notification} = Element;
 
 Vue.prototype.formatDateTimeMS = (value) => {
-  return Utils.formatDateTimeMS(value);
+  return utils.formatDateTimeMS(value);
 };
 Vue.prototype.formatDateTime = (value) => {
-  return Utils.formatDateTime(value);
+  return utils.formatDateTime(value);
 };
 Vue.prototype.formatDate = (value) => {
-  return Utils.formatDate(value);
+  return utils.formatDate(value);
 };
 Vue.prototype.formatTime = (value) => {
-  return Utils.formatTime(value);
+  return utils.formatTime(value);
 };
 
 Vue.filter('formatDateTimeMS', (value) => {
-  return Utils.formatDateTimeMS(value);
+  return utils.formatDateTimeMS(value);
 });
 Vue.filter('formatDateTime', (value) => {
-  return Utils.formatDateTime(value);
+  return utils.formatDateTime(value);
 });
 Vue.filter('formatDate', (value) => {
-  return Utils.formatDate(value);
+  return utils.formatDate(value);
 });
 Vue.filter('formatTime', (value) => {
-  return Utils.formatTime(value);
+  return utils.formatTime(value);
 });
 
 const router = new VueRouter({

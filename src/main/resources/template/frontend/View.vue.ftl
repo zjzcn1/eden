@@ -13,7 +13,7 @@
                 <el-button plain round icon="el-icon-search" @click="queryList">查询</el-button>
             </el-form-item>
             <el-form-item style="float: right">
-                <el-button type="primary" @click="handleCreate" icon="el-icon-plus">创建</el-button>
+                <el-button type="primary" @click="showCreate" icon="el-icon-plus">创建</el-button>
             </el-form-item>
         </el-form>
 
@@ -42,22 +42,17 @@
 
             <el-table-column align="center" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="handleUpdate(scope.$index, scope.row)">修改</el-button>
+                    <el-button type="text" @click="showUpdate(scope.$index, scope.row)">修改</el-button>
                     <el-divider direction="vertical"></el-divider>
-                    <el-popover placement="top" width="160" v-model="deleteFormVisible">
-                      <p>确定删除吗？</p>
-                      <div style="text-align: right; margin: 0">
-                        <el-button size="mini" @click="deleteFormVisible = false">取消</el-button>
-                        <el-button type="primary" size="mini" @click="handleDelete(scope.$index, scope.row)">确定</el-button>
-                      </div>
-                      <el-button type="text" slot="reference">删除</el-button>
-                    </el-popover>
+                    <el-popconfirm title="确定删除吗？" @onConfirm="submitDelete(scope.$index, scope.row)">
+                        <el-button type="text" slot="reference">删除</el-button>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
         <!--分页栏-->
         <el-pagination layout="total, sizes, prev, pager, next"
-                       @current-change="handlePageChange"
+                       @current-change="onPageChange"
                        :page-size="size"
                        :total="total"
                        style="float:right;">
@@ -65,7 +60,7 @@
 
         <!--新增界面-->
         <el-dialog title="创建" :visible.sync="createFormVisible" :close-on-click-modal="false">
-            <el-form :model="createForm" label-width="120px" :rules="createFormRules" ref="createForm">
+            <el-form :model="createForm" label-width="120px" :rules="createFormRules" ref="createForm" style="width: 80%">
             <#list columns as column>
             <#if (!column.isPrimaryKey && !column.isCreateTimeColumn && !column.isUpdateTimeColumn && !column.isDeletedColumn)>
                 <el-form-item label="${column.comment}" prop="${column.propertyName}">
@@ -76,7 +71,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="createFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="createSubmit">提交</el-button>
+                <el-button type="primary" @click.native="submitCreate">提交</el-button>
             </div>
         </el-dialog>
 
@@ -105,7 +100,7 @@
 </template>
 
 <script>
-  import Webapi from '@/common/webapi';
+  import webapi from '@/common/webapi';
 
   export default {
     data() {
@@ -138,16 +133,14 @@
           ],
           </#if>
         </#list>
-        },
-
-        deleteFormVisible: false
+        }
       }
     },
     mounted() {
        this.queryList();
     },
     methods: {
-      handlePageChange(val) {
+      onPageChange(val) {
         this.page = val;
         this.queryList();
       },
@@ -157,21 +150,21 @@
           page: this.page,
           params: this.queryParams
         };
-        Webapi.page${table.className}(params).then(
+        webapi.page${table.className}(params).then(
           res => {
             this.dataList = res.data.data.list;
             this.total = res.data.data.total;
           }
         );
       },
-      handleCreate() {
+      showCreate() {
         this.createFormVisible = true;
         this.createForm = {};
       },
-      createSubmit() {
+      submitCreate() {
         this.$refs.createForm.validate((valid) => {
           if (valid) {
-            Webapi.create${table.className}(this.createForm).then(
+            webapi.create${table.className}(this.createForm).then(
               () => {
                 this.createFormVisible = false;
                 this.queryList();
@@ -185,14 +178,14 @@
           }
         });
       },
-      handleUpdate(index, row) {
+      showUpdate(index, row) {
         this.updateFormVisible = true;
         this.updateForm = Object.assign({}, row);
       },
       updateSubmit() {
         this.$refs.updateForm.validate((valid) => {
           if (valid) {
-            Webapi.update${table.className}(this.updateForm).then(
+            webapi.update${table.className}(this.updateForm).then(
               () => {
                 this.updateFormVisible = false;
                 this.queryList();
@@ -206,9 +199,9 @@
           }
         });
       },
-      handleDelete(index, row) {
-        this.deleteFormVisible = false;
-        Webapi.delete${table.className}(row.id).then(
+      submitDelete(index, row) {
+        row.deleteFormVisible = false;
+        webapi.delete${table.className}(row.id).then(
           () => {
             this.queryList();
             this.$notify({
@@ -223,6 +216,6 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
 </style>

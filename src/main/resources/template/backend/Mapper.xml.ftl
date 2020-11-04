@@ -60,10 +60,15 @@
             count(*)
         from ${table.tableName}
         <where>
-            <!-- condition -->
+            1 = 1
+            <foreach index="key" item="value" collection="params">
+                <if test="key != null and key != '' and value != null">
+                    and ${r"${"}key{r"}"} = ${r"#{"}value${r"}"}
+                </if>
+            </foreach>
 
             <#if deletedColumn??>
-            ${deletedColumn} = 0
+            and ${deletedColumn} = 0
             </#if>
         </where>
     </select>
@@ -73,10 +78,15 @@
         <include refid="Base_Column_List"/>
         from ${table.tableName}
         <where>
-            <!-- condition -->
+            1 = 1
+            <foreach index="key" item="value" collection="params">
+                <if test="key != null and key != '' and value != null">
+                    and ${r"${"}key{r"}"} = ${r"#{"}value${r"}"}
+                </if>
+            </foreach>
 
             <#if deletedColumn??>
-            ${deletedColumn} = 0
+            and ${deletedColumn} = 0
             </#if>
         </where>
     </select>
@@ -86,10 +96,15 @@
         <include refid="Base_Column_List"/>
         from ${table.tableName}
         <where>
-            <!-- condition -->
+            1 = 1
+            <foreach index="key" item="value" collection="params">
+                <if test="key != null and key != '' and value != null">
+                    and ${r"${"}key{r"}"} = ${r"#{"}value${r"}"}
+                </if>
+            </foreach>
 
             <#if deletedColumn??>
-            ${deletedColumn} = 0
+            and ${deletedColumn} = 0
             </#if>
         </where>
     </select>

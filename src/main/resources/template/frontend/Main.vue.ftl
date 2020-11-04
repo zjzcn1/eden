@@ -63,7 +63,7 @@
 
 <script>
 
-  // import Webapi from '../common/webapi'
+  // import webapi from '../common/webapi'
 
   export default {
     data() {
@@ -77,7 +77,7 @@
         this.currentApp = 2;
         this.refresh();
       }, 3000);
-      // Webapi.getDemo()
+      // webapi.getDemo()
     },
     methods: {
       refresh() {
