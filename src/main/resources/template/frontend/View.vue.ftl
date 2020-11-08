@@ -44,7 +44,7 @@
                 <template slot-scope="scope">
                     <el-button type="text" @click="showUpdate(scope.$index, scope.row)">修改</el-button>
                     <el-divider direction="vertical"></el-divider>
-                    <el-popconfirm title="确定删除吗？" @onConfirm="submitDelete(scope.$index, scope.row)">
+                    <el-popconfirm title="确定删除吗？" @confirm="submitDelete(scope.$index, scope.row)">
                         <el-button type="text" slot="reference">删除</el-button>
                     </el-popconfirm>
                 </template>
@@ -200,7 +200,6 @@
         });
       },
       submitDelete(index, row) {
-        row.deleteFormVisible = false;
         webapi.delete${table.className}(row.id).then(
           () => {
             this.queryList();
