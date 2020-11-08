@@ -101,7 +101,7 @@ public class ParamBuilder {
                 sb.append("    // ").append(column.getComment()).append("\n");
                 sb.append("    private ").append("Boolean ").append(column.getPropertyName()).append(";\n");
             } else if (!column.getIsDeletedColumn()) {
-                sb.append("    // ").append(column.getComment()).append(";\n");
+                sb.append("    // ").append(column.getComment()).append("\n");
                 sb.append("    private ").append(column.getTypeName()).append(" ").append(column.getPropertyName()).append(";\n");
             }
         }
