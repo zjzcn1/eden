@@ -58,7 +58,7 @@
                        style="float:right;">
         </el-pagination>
 
-        <!--新增界面-->
+        <!--创建对话框-->
         <el-dialog title="创建" :visible.sync="createFormVisible" :close-on-click-modal="false">
             <el-form :model="createForm" label-width="120px" :rules="createFormRules" ref="createForm" style="width: 80%">
             <#list columns as column>
@@ -70,14 +70,14 @@
             </#list>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click.native="createFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="submitCreate">提交</el-button>
+                <el-button icon="el-icon-close" @click.native="createFormVisible = false">取消</el-button>
+                <el-button icon="el-icon-upload" type="primary" @click.native="createSubmit">提交</el-button>
             </div>
         </el-dialog>
 
-        <!--编辑界面-->
+        <!--修改对话框-->
         <el-dialog title="修改" :visible.sync="updateFormVisible" :close-on-click-modal="false">
-            <el-form :model="updateForm" label-width="120px" :rules="updateFormRules" ref="updateForm">
+            <el-form :model="updateForm" label-width="120px" :rules="updateFormRules" ref="updateForm" style="width: 80%">
             <#list columns as column>
             <#if column.isEnabledColumn>
                 <el-form-item label="${column.comment}" prop="${column.propertyName}">
@@ -92,8 +92,8 @@
             </#list>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click.native="updateFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="updateSubmit">提交</el-button>
+                <el-button icon="el-icon-close" @click.native="updateFormVisible = false">取消</el-button>
+                <el-button icon="el-icon-upload" type="primary"  @click.native="submitUpdate">提交</el-button>
             </div>
         </el-dialog>
     </section>
@@ -182,7 +182,7 @@
         this.updateFormVisible = true;
         this.updateForm = Object.assign({}, row);
       },
-      updateSubmit() {
+      submitUpdate() {
         this.$refs.updateForm.validate((valid) => {
           if (valid) {
             webapi.update${table.className}(this.updateForm).then(

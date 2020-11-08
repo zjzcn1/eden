@@ -3,7 +3,6 @@ package ${packageName}.common;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 
 public interface BaseDao<T> {
@@ -18,10 +17,10 @@ public interface BaseDao<T> {
 
     List<T> getListByIds(@Param("ids") List<Long> ids);
 
-    int count(@Param("params") Map<String, Object> params);
+    int count(@Param("params") List<QueryParam> params);
 
-    List<T> list(@Param("params") Map<String, Object> params);
+    List<T> list(@Param("params") List<QueryParam> params);
 
-    Page<T> page(Pageable pageable);
+    Page<T> page(PageParam param);
 
 }

@@ -24,7 +24,7 @@
 
 <#if deletedColumn??>
     <update id="delete">
-        update ${table.tableName} set ${deletedColumn} = 1
+        update ${table.tableName} set ${deletedColumn} = REPLACE(unix_timestamp(now(3)),'.','')
         where ${primaryKeyColumn} = ${primaryKeyProperty}
     </update>
 <#else>
@@ -61,12 +61,9 @@
         from ${table.tableName}
         <where>
             1 = 1
-            <foreach index="key" item="value" collection="params">
-                <if test="key != null and key != '' and value != null">
-                    and ${r"${"}key{r"}"} = ${r"#{"}value${r"}"}
-                </if>
+            <foreach item="param" collection="params">
+                and ${r"${"}param.field{r"}"} ${r"${"}param.op{r"}"} ${r"#{"}param.value${r"}"}
             </foreach>
-
             <#if deletedColumn??>
             and ${deletedColumn} = 0
             </#if>
@@ -79,12 +76,9 @@
         from ${table.tableName}
         <where>
             1 = 1
-            <foreach index="key" item="value" collection="params">
-                <if test="key != null and key != '' and value != null">
-                    and ${r"${"}key{r"}"} = ${r"#{"}value${r"}"}
-                </if>
+            <foreach item="param" collection="params">
+                and ${r"${"}param.field{r"}"} ${r"${"}param.op{r"}"} ${r"#{"}param.value${r"}"}
             </foreach>
-
             <#if deletedColumn??>
             and ${deletedColumn} = 0
             </#if>
@@ -97,12 +91,9 @@
         from ${table.tableName}
         <where>
             1 = 1
-            <foreach index="key" item="value" collection="params">
-                <if test="key != null and key != '' and value != null">
-                    and ${r"${"}key{r"}"} = ${r"#{"}value${r"}"}
-                </if>
+            <foreach item="param" collection="params">
+                and ${r"${"}param.field{r"}"} ${r"${"}param.op{r"}"} ${r"#{"}param.value${r"}"}
             </foreach>
-
             <#if deletedColumn??>
             and ${deletedColumn} = 0
             </#if>

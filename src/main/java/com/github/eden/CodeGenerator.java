@@ -71,11 +71,6 @@ public class CodeGenerator {
             String serviceFile = javaPath + ParamBuilder.buildServiceFileName(packageName, table.getClassName());
             FileUtils.write(new File(serviceFile), service, "UTF-8");
 
-            // ServiceImpl
-            String serviceImpl = engine.render("backend/ServiceImpl.java.ftl", param);
-            String serviceImplFile = javaPath + ParamBuilder.buildServiceImplFileName(packageName, table.getClassName());
-            FileUtils.write(new File(serviceImplFile), serviceImpl, "UTF-8");
-
             // Dao
             String dao = engine.render("backend/Dao.java.ftl", param);
             String daoFile = javaPath + ParamBuilder.buildDaoFileName(packageName, table.getClassName());
@@ -106,25 +101,15 @@ public class CodeGenerator {
         String baseDaoHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "BaseDao.java";
         FileUtils.write(new File(baseDaoHandlerFile), baseDaoHandler, "UTF-8");
 
-        // BaseService.java
-        String baseServiceHandler = engine.render("backend/common/BaseService.java.ftl", param);
-        String baseServiceHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "BaseService.java";
-        FileUtils.write(new File(baseServiceHandlerFile), baseServiceHandler, "UTF-8");
+        // QueryBuilder.java
+        String queryBuilderHandler = engine.render("backend/common/QueryBuilder.java.ftl", param);
+        String queryBuilderHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "QueryBuilder.java";
+        FileUtils.write(new File(queryBuilderHandlerFile), queryBuilderHandler, "UTF-8");
 
-        // BaseServiceImpl.java
-        String baseServiceImplHandler = engine.render("backend/common/BaseServiceImpl.java.ftl", param);
-        String baseServiceImplHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "BaseServiceImpl.java";
-        FileUtils.write(new File(baseServiceImplHandlerFile), baseServiceImplHandler, "UTF-8");
-
-        // ErrorCode.java
-        String errorCode = engine.render("backend/common/ErrorCode.java.ftl", param);
-        String errorCodeFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ErrorCode.java";
-        FileUtils.write(new File(errorCodeFile), errorCode, "UTF-8");
-
-        // ExceptionHandler.java
-        String exceptionHandler = engine.render("backend/common/ExceptionHandler.java.ftl", param);
-        String exceptionHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ExceptionHandler.java";
-        FileUtils.write(new File(exceptionHandlerFile), exceptionHandler, "UTF-8");
+        // QueryParam.java
+        String queryParamHandler = engine.render("backend/common/QueryParam.java.ftl", param);
+        String queryParamHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "QueryParam.java";
+        FileUtils.write(new File(queryParamHandlerFile), queryParamHandler, "UTF-8");
 
         // Page.java
         String page = engine.render("backend/common/Page.java.ftl", param);
@@ -136,6 +121,11 @@ public class CodeGenerator {
         String pageableFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Pageable.java";
         FileUtils.write(new File(pageableFile), pageable, "UTF-8");
 
+        // PageParam.java
+        String pageParam = engine.render("backend/common/PageParam.java.ftl", param);
+        String pageParamFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "PageParam.java";
+        FileUtils.write(new File(pageParamFile), pageParam, "UTF-8");
+
         // PagePlugin.java
         String pagePlugin = engine.render("backend/common/PagePlugin.java.ftl", param);
         String pagePluginFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "PagePlugin.java";
@@ -145,6 +135,16 @@ public class CodeGenerator {
         String result = engine.render("backend/common/Result.java.ftl", param);
         String resultFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Result.java";
         FileUtils.write(new File(resultFile), result, "UTF-8");
+
+        // ErrorCode.java
+        String errorCode = engine.render("backend/common/ErrorCode.java.ftl", param);
+        String errorCodeFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ErrorCode.java";
+        FileUtils.write(new File(errorCodeFile), errorCode, "UTF-8");
+
+        // ExceptionHandler.java
+        String exceptionHandler = engine.render("backend/common/ExceptionHandler.java.ftl", param);
+        String exceptionHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ExceptionHandler.java";
+        FileUtils.write(new File(exceptionHandlerFile), exceptionHandler, "UTF-8");
 
         // ServiceException.java
         String serviceException = engine.render("backend/common/ServiceException.java.ftl", param);

@@ -47,8 +47,8 @@ public class PagePlugin implements Interceptor {
         final Object[] queryArgs = invocation.getArgs();
         final Object parameter = queryArgs[PARAMETER_INDEX];
 
-        Pageable pageable = findObjectFromParams(parameter, Pageable.class);
-        if (pageable == null) {
+        PageParam pageParam = findObjectFromParams(parameter, PageParam.class);
+        if (pageParam == null) {
             return invocation.proceed();
         }
 
@@ -56,17 +56,17 @@ public class PagePlugin implements Interceptor {
         final BoundSql boundSql = ms.getBoundSql(parameter);
         String sql = removeSqlSemicolon(boundSql.getSql().trim());
 
-        int size = pageable.getSize();
+        int size = pageParam.getSize();
         long total = queryTotal(sql, ms, boundSql);
 
-        String pageSql = getPageSql(sql, (pageable.getPage() - 1) * size, size);
+        String pageSql = getPageSql(sql, (pageParam.getPage() - 1) * size, size);
 
         queryArgs[ROW_BOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
         queryArgs[MAPPED_STATEMENT_INDEX] = copyFromNewSql(ms, boundSql, pageSql);
 
         Object ret = invocation.proceed();
 
-        Page<?> page = Page.of(pageable.getPage(), pageable.getSize(), total, (List<?>) ret);
+        Page<?> page = Page.of(pageParam.getPage(), pageParam.getSize(), total, (List<?>) ret);
 
         List<Page<?>> result = new ArrayList<>(1);
         result.add(page);

@@ -1,14 +1,88 @@
 package ${packageName}.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
-@Data
-@AllArgsConstructor
-public class QueryParam {
+import org.apache.commons.lang3.StringUtils;
 
-    private String field;
-    private Object value;
-    private String op;
+import java.util.ArrayList;
+import java.util.List;
+
+public class QueryBuilder {
+
+    private List<QueryParam> params = new ArrayList<>();
+
+    private QueryBuilder() {
+    }
+
+    public static QueryBuilder create() {
+        return new QueryBuilder();
+    }
+
+    public List<QueryParam> build() {
+        return params;
+    }
+
+    public QueryBuilder eq(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, value, " = "));
+        }
+        return this;
+    }
+
+    public QueryBuilder ne(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, value, "! = "));
+        }
+        return this;
+    }
+
+    public QueryBuilder lt(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, value, " < "));
+        }
+        return this;
+    }
+
+    public QueryBuilder le(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, value, " <= "));
+        }
+        return this;
+    }
+
+    public QueryBuilder gt(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, value, " > "));
+        }
+        return this;
+    }
+
+    public QueryBuilder ge(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, value, " >= "));
+        }
+        return this;
+    }
+
+    public QueryBuilder like(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, "%" + value + "%", " like "));
+        }
+        return this;
+    }
+
+    public QueryBuilder likeLeft(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, "%" + value, " like "));
+        }
+        return this;
+    }
+
+    public QueryBuilder likeRight(String field, Object value) {
+        if (StringUtils.isNotBlank(field) && value != null) {
+            params.add(new QueryParam(field, value + "%", " like "));
+        }
+        return this;
+    }
 
 }
+
