@@ -106,25 +106,25 @@ public class CodeGenerator {
         String queryBuilderHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "QueryBuilder.java";
         FileUtils.write(new File(queryBuilderHandlerFile), queryBuilderHandler, "UTF-8");
 
-        // QueryParam.java
-        String queryParamHandler = engine.render("backend/common/QueryParam.java.ftl", param);
-        String queryParamHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "QueryParam.java";
-        FileUtils.write(new File(queryParamHandlerFile), queryParamHandler, "UTF-8");
+        // QueryCondition.java
+        String queryConditionHandler = engine.render("backend/common/QueryCondition.java.ftl", param);
+        String queryConditionHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "QueryCondition.java";
+        FileUtils.write(new File(queryConditionHandlerFile), queryConditionHandler, "UTF-8");
 
         // Page.java
         String page = engine.render("backend/common/Page.java.ftl", param);
         String pageFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Page.java";
         FileUtils.write(new File(pageFile), page, "UTF-8");
 
-        // Pageable.java
-        String pageable = engine.render("backend/common/Pageable.java.ftl", param);
-        String pageableFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "Pageable.java";
-        FileUtils.write(new File(pageableFile), pageable, "UTF-8");
-
         // PageParam.java
         String pageParam = engine.render("backend/common/PageParam.java.ftl", param);
         String pageParamFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "PageParam.java";
         FileUtils.write(new File(pageParamFile), pageParam, "UTF-8");
+
+        // MapParam.java
+        String mapParam = engine.render("backend/common/MapParam.java.ftl", param);
+        String mapParamFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "MapParam.java";
+        FileUtils.write(new File(mapParamFile), mapParam, "UTF-8");
 
         // PagePlugin.java
         String pagePlugin = engine.render("backend/common/PagePlugin.java.ftl", param);

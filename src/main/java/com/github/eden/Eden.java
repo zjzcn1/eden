@@ -14,7 +14,6 @@ public class Eden {
 
         Config config = Utils.loadYaml(rootPath + CONFIG_FILE, Config.class);
         CodeGenerator generator = new CodeGenerator(config);
-
         generator.generateCode();
     }
 

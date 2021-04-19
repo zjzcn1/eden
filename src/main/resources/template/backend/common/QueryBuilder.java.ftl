@@ -8,7 +8,7 @@ import java.util.List;
 
 public class QueryBuilder {
 
-    private List<QueryParam> params = new ArrayList<>();
+    private List<QueryCondition> params = new ArrayList<>();
 
     private QueryBuilder() {
     }
@@ -23,63 +23,63 @@ public class QueryBuilder {
 
     public QueryBuilder eq(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, value, " = "));
+            params.add(new QueryCondition(field, value, " = "));
         }
         return this;
     }
 
     public QueryBuilder ne(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, value, "! = "));
+            params.add(new QueryCondition(field, value, "! = "));
         }
         return this;
     }
 
     public QueryBuilder lt(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, value, " < "));
+            params.add(new QueryCondition(field, value, " < "));
         }
         return this;
     }
 
     public QueryBuilder le(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, value, " <= "));
+            params.add(new QueryCondition(field, value, " <= "));
         }
         return this;
     }
 
     public QueryBuilder gt(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, value, " > "));
+            params.add(new QueryCondition(field, value, " > "));
         }
         return this;
     }
 
     public QueryBuilder ge(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, value, " >= "));
+            params.add(new QueryCondition(field, value, " >= "));
         }
         return this;
     }
 
     public QueryBuilder like(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, "%" + value + "%", " like "));
+            params.add(new QueryCondition(field, "%" + value + "%", " like "));
         }
         return this;
     }
 
     public QueryBuilder likeLeft(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, "%" + value, " like "));
+            params.add(new QueryCondition(field, "%" + value, " like "));
         }
         return this;
     }
 
     public QueryBuilder likeRight(String field, Object value) {
         if (StringUtils.isNotBlank(field) && value != null) {
-            params.add(new QueryParam(field, value + "%", " like "));
+            params.add(new QueryCondition(field, value + "%", " like "));
         }
         return this;
     }

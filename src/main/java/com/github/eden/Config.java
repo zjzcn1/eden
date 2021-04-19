@@ -20,4 +20,5 @@ public class Config {
     private String updateTimeColumn;
     private String deletedColumn;
     private String enabledColumn;
+
 }

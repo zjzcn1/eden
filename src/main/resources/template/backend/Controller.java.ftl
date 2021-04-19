@@ -1,7 +1,8 @@
 package ${packageName}.controller;
 
 import ${packageName}.common.Page;
-import ${packageName}.common.Pageable;
+import ${packageName}.common.PageParam;
+import ${packageName}.common.MapParam;
 import ${packageName}.common.Result;
 import ${packageName}.entity.${table.className};
 import ${packageName}.service.${table.className}Service;
@@ -9,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Date  ${date}
@@ -51,22 +50,22 @@ public class ${table.className}Controller {
 
     @RequestMapping(path = "${table.objectName}/count", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Integer> count(@RequestBody Map<String, Object> params) {
+    public Result<Integer> count(@RequestBody MapParam params) {
         int count = ${table.objectName}Service.count${table.className}(params);
         return Result.success(count);
     }
 
     @RequestMapping(path = "${table.objectName}/list", method = RequestMethod.POST)
     @ResponseBody
-    public Result<List<${table.className}>> list(@RequestBody Map<String, Object> params) {
+    public Result<List<${table.className}>> list(@RequestBody MapParam params) {
         List<${table.className}> list = ${table.objectName}Service.list${table.className}(params);
         return Result.success();
     }
 
     @RequestMapping(path = "${table.objectName}/page", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Page<${table.className}>> page(@RequestBody Pageable pageable) {
-        Page<${table.className}> page = ${table.objectName}Service.page${table.className}(pageable);
+    public Result<Page<${table.className}>> page(@RequestBody PageParam params) {
+        Page<${table.className}> page = ${table.objectName}Service.page${table.className}(params);
         return Result.success(page);
     }
 

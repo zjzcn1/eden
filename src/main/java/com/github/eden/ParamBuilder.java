@@ -78,6 +78,12 @@ public class ParamBuilder {
         param.put("primaryKeyProperty", "#{" + primaryKeyColumn.getPropertyName() + "}");
 
         for (TableColumn column : columns) {
+            if (column.getColumnName().equals(config.getCreateTimeColumn())) {
+                param.put("createTimeColumn", column.getColumnName());
+            }
+            if (column.getColumnName().equals(config.getUpdateTimeColumn())) {
+                param.put("updateTimeColumn", column.getColumnName());
+            }
             if (column.getColumnName().equals(config.getDeletedColumn())) {
                 param.put("deletedColumn", column.getColumnName());
             }

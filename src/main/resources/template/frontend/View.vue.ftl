@@ -10,7 +10,7 @@
             </#if>
             </#list>
             <el-form-item>
-                <el-button plain round icon="el-icon-search" @click="queryList">查询</el-button>
+                <el-button plain round icon="el-icon-search" @click="queryList(1)">查询</el-button>
             </el-form-item>
             <el-form-item style="float: right">
                 <el-button type="primary" @click="showCreate" icon="el-icon-plus">创建</el-button>
@@ -52,7 +52,7 @@
         </el-table>
         <!--分页栏-->
         <el-pagination layout="total, sizes, prev, pager, next"
-                       @current-change="onPageChange"
+                       @current-change="queryList"
                        :page-size="size"
                        :total="total"
                        style="float:right;">
@@ -70,7 +70,7 @@
             </#list>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="el-icon-close" @click.native="createFormVisible = false">取消</el-button>
+                <el-button icon="el-icon-circle-close" @click.native="createFormVisible = false">取消</el-button>
                 <el-button icon="el-icon-upload" type="primary" @click.native="createSubmit">提交</el-button>
             </div>
         </el-dialog>
@@ -92,7 +92,7 @@
             </#list>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="el-icon-close" @click.native="updateFormVisible = false">取消</el-button>
+                <el-button icon="el-icon-circle-close" @click.native="updateFormVisible = false">取消</el-button>
                 <el-button icon="el-icon-upload" type="primary"  @click.native="submitUpdate">提交</el-button>
             </div>
         </el-dialog>
@@ -140,11 +140,10 @@
        this.queryList();
     },
     methods: {
-      onPageChange(val) {
-        this.page = val;
-        this.queryList();
-      },
-      queryList() {
+      queryList(page) {
+        if (page) {
+          this.page = page;
+        }
         let params = {
           size: this.size,
           page: this.page,

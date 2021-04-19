@@ -22,6 +22,22 @@
         where ${primaryKeyColumn} = ${primaryKeyProperty}
     </update>
 
+    <update id="updateSelective" parameterType="${packageName}.entity.${table.className}">
+        update ${table.tableName}
+        <set>
+        <#list columns as column>
+        <#if deletedColumn?? && deletedColumn != column.columnName &&
+             createTimeColumn?? && createTimeColumn != column.columnName &&
+             updateTimeColumn?? && updateTimeColumn != column.columnName>
+            <if test="${column.propertyName} != null">
+                ${column.columnName} = ${r"#{"}${column.propertyName}${r"}"},
+            </if>
+        </#if>
+        </#list>
+        </set>
+        where ${primaryKeyColumn} = ${primaryKeyProperty}
+    </update>
+
 <#if deletedColumn??>
     <update id="delete">
         update ${table.tableName} set ${deletedColumn} = REPLACE(unix_timestamp(now(3)),'.','')
@@ -61,8 +77,8 @@
         from ${table.tableName}
         <where>
             1 = 1
-            <foreach item="param" collection="params">
-                and ${r"${"}param.field{r"}"} ${r"${"}param.op{r"}"} ${r"#{"}param.value${r"}"}
+            <foreach item="condition" collection="conditions">
+                and ${r"${"}condition.field${r"}"} ${r"${"}condition.op${r"}"} ${r"#{"}condition.value${r"}"}
             </foreach>
             <#if deletedColumn??>
             and ${deletedColumn} = 0
@@ -76,8 +92,8 @@
         from ${table.tableName}
         <where>
             1 = 1
-            <foreach item="param" collection="params">
-                and ${r"${"}param.field{r"}"} ${r"${"}param.op{r"}"} ${r"#{"}param.value${r"}"}
+            <foreach item="condition" collection="conditions">
+                and ${r"${"}condition.field${r"}"} ${r"${"}condition.op${r"}"} ${r"#{"}condition.value${r"}"}
             </foreach>
             <#if deletedColumn??>
             and ${deletedColumn} = 0
@@ -91,8 +107,8 @@
         from ${table.tableName}
         <where>
             1 = 1
-            <foreach item="param" collection="params">
-                and ${r"${"}param.field{r"}"} ${r"${"}param.op{r"}"} ${r"#{"}param.value${r"}"}
+            <foreach item="condition" collection="conditions">
+                and ${r"${"}condition.field${r"}"} ${r"${"}condition.op${r"}"} ${r"#{"}condition.value${r"}"}
             </foreach>
             <#if deletedColumn??>
             and ${deletedColumn} = 0

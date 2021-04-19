@@ -7,13 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ${packageName}.entity.${table.className};
 import ${packageName}.dao.${table.className}Dao;
 import ${packageName}.common.QueryBuilder;
-import ${packageName}.common.QueryParam;
+import ${packageName}.common.QueryCondition;
 import ${packageName}.common.Page;
-import ${packageName}.common.Pageable;
 import ${packageName}.common.PageParam;
+import ${packageName}.common.MapParam;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Date  ${date}
@@ -23,7 +22,7 @@ import java.util.Map;
 public class ${table.className}Service {
 
     @Autowired
-    protected ${table.className}Dao ${table.objectName}Dao;
+    private ${table.className}Dao ${table.objectName}Dao;
 
     @Transactional
     public Long create${table.className}(${table.className} ${table.objectName}) {
@@ -48,22 +47,23 @@ public class ${table.className}Service {
         return ${table.objectName}Dao.getListByIds(ids);
     }
 
-    public int count${table.className}(Map<String, Object> params) {
-        List<QueryParam> queryParams = QueryBuilder.create()
+    public int count${table.className}(MapParam params) {
+        List<QueryCondition> conditions = QueryBuilder.create()
                 .build();
-        return ${table.objectName}Dao.count(queryParams);
+        return ${table.objectName}Dao.count(conditions);
     }
 
-    public List<${table.className}> list${table.className}(Map<String, Object> params) {
-        List<QueryParam> queryParams = QueryBuilder.create()
+    public List<${table.className}> list${table.className}(MapParam params) {
+        List<QueryCondition> conditions = QueryBuilder.create()
                 .build();
-        return ${table.objectName}Dao.list(queryParams);
+        return ${table.objectName}Dao.list(conditions);
     }
 
-    public Page<${table.className}> page${table.className}(Pageable pageable) {
-        List<QueryParam> queryParams = QueryBuilder.create()
+    public Page<${table.className}> page${table.className}(PageParam params) {
+        List<QueryCondition> conditions = QueryBuilder.create()
                 .build();
-        return ${table.objectName}Dao.page(PageParam.of(pageable.getPage(), pageable.getSize(), queryParams));
+        params.setConditions(conditions);
+        return ${table.objectName}Dao.page(params);
     }
 
 }
