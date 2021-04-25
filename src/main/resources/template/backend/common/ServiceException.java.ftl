@@ -6,14 +6,10 @@ public class ServiceException extends RuntimeException {
     private int code;
     private String message;
 
-    private ServiceException(int code, String message) {
+    public ServiceException(int code, String message, Object... args) {
         super(message);
         this.code = code;
-        this.message = message;
-    }
-
-    public static ServiceException of(int code, String message) {
-        return new ServiceException(code, message);
+        this.message = MessageFormatter.format(message, args).getMessage();
     }
 
     public int code() {
