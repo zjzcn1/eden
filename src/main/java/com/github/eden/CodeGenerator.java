@@ -146,6 +146,11 @@ public class CodeGenerator {
         String exceptionHandlerFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ExceptionHandler.java";
         FileUtils.write(new File(exceptionHandlerFile), exceptionHandler, "UTF-8");
 
+        // MessageFormatter.java
+        String messageFormatter = engine.render("backend/common/MessageFormatter.java.ftl", param);
+        String messageFormatterFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "MessageFormatter.java";
+        FileUtils.write(new File(messageFormatterFile), messageFormatter, "UTF-8");
+
         // ServiceException.java
         String serviceException = engine.render("backend/common/ServiceException.java.ftl", param);
         String serviceExceptionFile = javaPath + ParamBuilder.buildCommonPath(packageName) + "ServiceException.java";

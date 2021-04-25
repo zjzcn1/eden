@@ -18,11 +18,12 @@ public class Page<T> {
         this.list = list;
     }
 
-    public static <T> Page<T> of(Pageable pageable, long total, List<T> list) {
-        return new Page<>(pageable.getPage(), pageable.getSize(), total, list);
+    public static <T> Page<T> of(PageParam pageParam, long total, List<T> list) {
+        return new Page<>(pageParam.getPage(), pageParam.getSize(), total, list);
     }
 
     public static <T> Page<T> of(int page, int size, long total, List<T> list) {
         return new Page<>(page, size, total, list);
     }
 }
+
