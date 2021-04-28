@@ -1,25 +1,38 @@
 <template>
     <el-container class="container">
         <header class="header-container">
-            <el-col :span="10" class="logo">
+            <el-col :span="10" class="logo" :class="collapsed?'sidebar-collapse-width':'sidebar-width'">
                 <img class="icon" src="../assets/logo.png"/>
-                <span class="text">${systemName}</span>
+                <span class="text">{{collapsed ? '' : '${systemName}'}}</span>
             </el-col>
             <el-col :span="10" class="tool">
-
+                <div @click.prevent="collapse" class="tool-item">
+                    <i class="fa fa-bars"></i>
+                </div>
+                <div @click.prevent="refresh" class="tool-item">
+                    <i class="fa fa-refresh"></i>
+                </div>
+                <el-breadcrumb separator="/">
+                    <template v-for="(item, index) in $route.meta.breadcrumb ? $route.meta.breadcrumb : $route.matched">
+                        <el-breadcrumb-item :key="index" :to="item.path">
+                            {{ item.name }}
+                        </el-breadcrumb-item>
+                    </template>
+                </el-breadcrumb>
             </el-col>
             <el-col :span="4" class="user">
                 <span>
                     <i class="el-icon-user-solid"></i>
-                    {{userName}}
+                    {{username}}
                 </span>
             </el-col>
         </header>
         <div :span="24" class="body-container">
-            <aside class="sidebar-container">
-                <el-menu :default-active="$route.path" unique-opened router>
+            <aside class="sidebar-container" :class="collapsed?'sidebar-collapse-width':'sidebar-width'">
+                <el-menu :default-active="$route.path" unique-opened router :collapse="collapsed" :collapse-transition="false">
                     <template v-for="(item, index) in $router.options.routes">
-                        <el-submenu :index="item.path + index" v-if="!item.meta.hidden&&!item.meta.leaf" :key="index">
+                        <el-submenu :index="item.path + index" :key="index"
+                                    v-if="!item.meta.hidden&&!item.meta.leaf">
                             <template slot="title">
                                 <i class="icon" :class="item.meta.icon"></i>
                                 <span slot="title">{{item.name}}</span>
@@ -43,17 +56,9 @@
                 </el-menu>
             </aside>
             <div :span="24" class="content-container">
-                <el-breadcrumb separator="/">
-                    <i :class="$route.meta.icon"></i>
-                    <template v-for="(item, index) in $route.meta.breadcrumb ? $route.meta.breadcrumb : $route.matched">
-                        <el-breadcrumb-item :key="index">
-                            {{ item.name }}
-                        </el-breadcrumb-item>
-                    </template>
-                </el-breadcrumb>
                 <el-main>
                     <transition name="fade" mode="out-in">
-                        <router-view v-if="isRouterAlive" :msg="currentApp"></router-view>
+                        <router-view v-if="isRouterAlive"></router-view>
                     </transition>
                 </el-main>
             </div>
@@ -68,8 +73,9 @@
   export default {
     data() {
       return {
+        collapsed: false,
         isRouterAlive: true,
-        userName: ''
+        username: ''
       }
     },
     mounted() {
@@ -80,6 +86,9 @@
       // webapi.getDemo()
     },
     methods: {
+      collapse(){
+        this.collapsed=!this.collapsed;
+      },
       refresh() {
         this.isRouterAlive = false;
         this.$nextTick(() => {
@@ -94,11 +103,10 @@
 <style lang="scss">
     @import '../assets/iconfont/iconfont.css';
 
-    $header-color: #373d41;
-    $header-height: 50px;
-    $sidebar-width: 220px;
-    $sidebar-collapse-width: 64px;
-    $breadcrumb-height: 42px;
+    $sidebar-background-color: #1c1e2f;
+    $header-height: 56px;
+    $sidebar-width: 240px;
+    $sidebar-collapse-width: 65px;
 
     @mixin scrollbar() {
         overflow-y: auto;
@@ -120,20 +128,26 @@
         width: 100%;
         height: 100%;
 
+        .sidebar-width {
+            width: $sidebar-width;
+        }
+        .sidebar-collapse-width{
+            width: $sidebar-collapse-width;
+        }
         .header-container {
-            background-color: $header-color;
             color: #fff;
             line-height: $header-height;
-            height: $header-height;
+            height: $header-height - 1;
             width: 100%;
+            box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
 
             .logo {
-                width: $sidebar-width;
+                background-color: $sidebar-background-color;
                 height: $header-height;
                 font-size: 18px;
-                padding-left: 12px;
+                padding-left: 4px;
                 padding-right: 20px;
-                border-right: 1px solid rgba(238, 241, 146, 0.3);
+                border-right: solid 1px #e6e6e6;
 
                 .icon {
                     height: 30px;
@@ -148,17 +162,35 @@
             }
 
             .tool {
-                .app-select {
-                    margin-left: 12px;
+                padding-left: 8px;
+                .tool-item {
+                    padding: 0px 12px;
+                    width:14px;
+                    cursor: pointer;
+                    color: #595959;
+                    float: left;
+                }
+                .el-breadcrumb {
+                    padding: 0 14px;
+                    height: $header-height;
+                    line-height: $header-height;
 
-                    .el-input__inner {
-                        border-radius: 2px;
-                        width: 200px;
+                    i {
+                        font-size: 14px;
+                        color: #909399;
+                        float: left;
+                        margin-right: 8px;
+                    }
+
+                    .back-button {
+                        float: right;
+                        margin: 5px 15px;
                     }
                 }
             }
 
             .user {
+                color: #595959;
                 text-align: right;
                 padding-right: 35px;
                 float: right;
@@ -180,51 +212,81 @@
             .sidebar-container {
                 @include scrollbar;
 
-                width: $sidebar-width;
                 z-index: 200;
+
                 .el-menu {
                     height: 100%;
+                    background-color: $sidebar-background-color;
 
                     .icon {
                         margin-right: 8px;
                     }
+
+                    .el-menu--inline {
+                        border-left: 5px solid #2c3b41;
+                    }
+
+                    .el-menu-item, .el-submenu__title {
+                        background-color: $sidebar-background-color;
+                        color: #ffffff;
+                        height: 50px;
+                        line-height: 50px;
+                    }
+
+                    .el-menu-item i, .el-submenu__title i {
+                        color: #ffffff;
+                    }
+
+                    .el-menu-item.is-active {
+                        background-color: #1890ff;
+                    }
+
                 }
             }
 
             .content-container {
-                background: #f3f3f3;
+                background: #ffffff;
                 flex: 1;
                 overflow-x: auto;
-
-                .el-breadcrumb {
-                    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
-                    padding: 0 14px;
-                    height: $breadcrumb-height;
-                    line-height: $breadcrumb-height;
-                    i {
-                        font-size: 14px;
-                        color: #909399;
-                        float: left;
-                        margin-right: 8px;
-                    }
-                }
 
                 .el-main {
                     @include scrollbar;
 
-                    height: calc(100vh - ${r"#{"}$header-height${r"}"} - ${r"#{"}$breadcrumb-height${r"}"});
+                    height: calc(100vh - 1px - ${r"#{"}$header-height${r"}"});
                     margin-top: 1px;
-                    padding: 20px 12px;
+                    padding: 0;
                     box-sizing: border-box;
 
                     .query-bar {
                         margin-left: 16px;
+
                         .el-form-item {
                             margin-right: 20px;
                         }
-                        .el-input {
-                            width: 120px;
-                        }
+                    }
+
+                    /*去掉表格单元格边框*/
+                    .customer-no-border-table th {
+                        border: none;
+                    }
+
+                    .customer-no-border-table td, .customer-no-border-table th.is-leaf {
+                        border: none;
+                    }
+
+                    /*表格最外边框*/
+                    .customer-no-border-table .el-table--border, .el-table--group {
+                        border: none;
+                    }
+
+                    /*头部边框*/
+                    .customer-no-border-table thead tr th.is-leaf {
+                        border: 0px solid #EBEEF5;
+                        border-right: none;
+                    }
+
+                    .customer-no-border-table thead tr th:nth-last-of-type(2) {
+                        border-right: 0px solid #EBEEF5;
                     }
                 }
             }
