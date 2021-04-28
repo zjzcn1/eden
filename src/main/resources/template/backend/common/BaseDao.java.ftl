@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BaseDao<T> {
 
-    void insert(T entity);
+    int insert(T entity);
 
     int update(T entity);
 
