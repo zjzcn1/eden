@@ -22,9 +22,9 @@ public class ${table.className}Controller {
 
     @RequestMapping(path = "${table.objectName}/create", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Long> create(@RequestBody ${table.className} ${table.objectName}) {
-        Long id = ${table.objectName}Service.create${table.className}(${table.objectName});
-        return Result.success(id);
+    public Result<Void> create(@RequestBody ${table.className} ${table.objectName}) {
+        ${table.objectName}Service.create${table.className}(${table.objectName});
+        return Result.success();
     }
 
     @RequestMapping(path = "${table.objectName}/update", method = RequestMethod.PUT)
