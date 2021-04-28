@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section style="padding: 32px 16px">
         <!--查询栏-->
         <el-form class="query-bar" :inline="true">
             <#list columns as column>
@@ -55,7 +55,7 @@
                        @current-change="queryList"
                        :page-size="size"
                        :total="total"
-                       style="float:right;">
+                       style="float:right; padding: 8px 0">
         </el-pagination>
 
         <!--创建对话框-->
@@ -71,7 +71,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="el-icon-circle-close" @click.native="createFormVisible = false">取消</el-button>
-                <el-button icon="el-icon-upload" type="primary" @click.native="createSubmit">提交</el-button>
+                <el-button icon="el-icon-upload" type="primary" @click.native="submitCreate">提交</el-button>
             </div>
         </el-dialog>
 
