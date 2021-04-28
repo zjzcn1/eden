@@ -25,7 +25,7 @@ public class ${table.className}Service {
     private ${table.className}Dao ${table.objectName}Dao;
 
     @Transactional
-    public Long create${table.className}(${table.className} ${table.objectName}) {
+    public int create${table.className}(${table.className} ${table.objectName}) {
         return ${table.objectName}Dao.insert(${table.objectName});
     }
 
