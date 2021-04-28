@@ -3,7 +3,6 @@ import App from './App'
 import routes from './common/routes'
 import config from './common/config'
 import utils from './common/utils'
-
 import axios from 'axios';
 import Element from 'element-ui'
 import './styles/style-variables.scss'
@@ -11,12 +10,14 @@ import VueRouter from 'vue-router'
 import 'font-awesome/css/font-awesome.min.css'
 import JSONbig from 'json-bigint'
 import VeCharts from 've-charts'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 Vue.use(Element, {size: 'small'});
 Vue.use(VueRouter);
 Vue.use(VeCharts);
-
-const {Loading, Notification} = Element;
+const {Notification} = Element;
+NProgress.configure({ showSpinner: false });
 
 Vue.prototype.formatDateTimeMS = (value) => {
   return utils.formatDateTimeMS(value);
@@ -56,10 +57,9 @@ axios.defaults.transformResponse = [
   }
 ];
 
-let loadingInstance = null;
 axios.interceptors.request.use(
   (config) => {
-    loadingInstance = Loading.service({ fullscreen: true });
+    NProgress.start();
     return config;
   },
   (error) => {
@@ -68,7 +68,7 @@ axios.interceptors.request.use(
 )
 axios.interceptors.response.use(
   response => {
-    loadingInstance.close();
+    NProgress.done();
     if (response.data.code < 400) {
       return response;
     } else if (response.data.code === 401) {
@@ -84,13 +84,13 @@ axios.interceptors.response.use(
     return Promise.reject(response);
   },
   error => {
-    loadingInstance.close();
+    NProgress.done();
     if (error.response && error.response.status === 401) {
       window.location.href = config.url().ssoLoginUrl;
     } else {
       Notification.error({
         title: '错误',
-        message: error.message,
+        message: '请求错误',
       });
       return Promise.reject(error);
     }
