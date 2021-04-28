@@ -17,7 +17,7 @@ public class QueryBuilder {
         return new QueryBuilder();
     }
 
-    public List<QueryParam> build() {
+    public List<QueryCondition> build() {
         return params;
     }
 
