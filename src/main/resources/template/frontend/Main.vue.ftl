@@ -7,10 +7,10 @@
             </el-col>
             <el-col :span="10" class="tool">
                 <div @click.prevent="collapse" class="tool-item">
-                    <i class="fa fa-bars"></i>
+                    <i style="font-size: 18px;" :class="[collapsed ? 'el-icon-s-unfold' : 'el-icon-s-fold']"></i>
                 </div>
                 <div @click.prevent="refresh" class="tool-item">
-                    <i class="fa fa-refresh"></i>
+                    <i style="font-size: 18px;"  class="el-icon-refresh"></i>
                 </div>
                 <el-breadcrumb separator="/">
                     <template v-for="(item, index) in $route.meta.breadcrumb ? $route.meta.breadcrumb : $route.matched">
