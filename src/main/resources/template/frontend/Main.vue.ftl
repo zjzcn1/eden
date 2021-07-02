@@ -222,15 +222,11 @@
                         margin-right: 8px;
                     }
 
-                    .el-menu--inline {
-                        border-left: 5px solid #2c3b41;
-                    }
-
                     .el-menu-item, .el-submenu__title {
                         background-color: $sidebar-background-color;
                         color: #ffffff;
-                        height: 50px;
-                        line-height: 50px;
+                        height: 48px;
+                        line-height: 48px;
                     }
 
                     .el-menu-item i, .el-submenu__title i {
@@ -238,9 +234,12 @@
                     }
 
                     .el-menu-item.is-active {
-                        background-color: #1890ff;
+                        background-color: #409eff;
                     }
 
+                    .is-opened .el-menu-item:not(.is-active) {
+                        background-color: #000c17;
+                    }
                 }
             }
 
