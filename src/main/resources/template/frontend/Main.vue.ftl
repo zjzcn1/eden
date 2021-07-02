@@ -105,7 +105,7 @@
 
     $sidebar-background-color: #1c1e2f;
     $header-height: 56px;
-    $sidebar-width: 240px;
+    $sidebar-width: 220px;
     $sidebar-collapse-width: 65px;
 
     @mixin scrollbar() {
@@ -225,8 +225,8 @@
                     .el-menu-item, .el-submenu__title {
                         background-color: $sidebar-background-color;
                         color: #ffffff;
-                        height: 48px;
-                        line-height: 48px;
+                        height: 42px;
+                        line-height: 42px;
                     }
 
                     .el-menu-item i, .el-submenu__title i {
